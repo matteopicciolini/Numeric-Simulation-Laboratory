@@ -1,0 +1,5 @@
+#pragma once
+
+// define your version_libinterface
+//#define VERSION_LIBINTERFACE @LIBINTERFACE_VERSION@
+#define ROOT_PATH "@CMAKE_SOURCE_DIR@"
