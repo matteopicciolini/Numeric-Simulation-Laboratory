@@ -7,6 +7,7 @@ set(MAKEFLAGS += -s)
 #add_subdirectory(general-library)
 add_subdirectory(random-library)
 add_subdirectory(Lezione_01)
+add_subdirectory(Lezione_02)
 
 
 
