@@ -1,7 +1,8 @@
 #include "Library_03.h"
 
+
 void Random_Start(Random &random_generator){
-	
+
 	int seed[4];
 	int p1, p2;
 	std::ifstream Primes(std::string(ROOT_PATH) + "/random-library/Primes");
@@ -26,7 +27,6 @@ void Random_Start(Random &random_generator){
 }
 
 double error(double AV, double AV2, int n){
-
 	if (n == 0){
 		return 0;
 	}
