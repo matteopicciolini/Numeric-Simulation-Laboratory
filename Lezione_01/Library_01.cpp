@@ -51,7 +51,6 @@ void average_calc(int n_iteration, int n_block, std::vector<double> &ave, std::v
 }
 
 void blocks_averege(int n_iteration, int n_block, std::vector<double> &ave, std::vector<double> &ave_2, std::ofstream &file_output){
-	int L = n_iteration / n_block;
 	double sum_prog = 0., sum2_prog = 0.; //progressive sum
 	for (int i = 0; i < n_block; ++i){
         sum_prog = 0.;
@@ -62,7 +61,7 @@ void blocks_averege(int n_iteration, int n_block, std::vector<double> &ave, std:
 		}
 		sum_prog /= i + 1;
 		sum2_prog /= i + 1;
-		file_output << (i + 1) * L << std::setw(20) << sum_prog << std::setw(20) << error(sum_prog, sum2_prog, i) << std::endl;
+		file_output << (i + 1) << std::setw(20) << sum_prog << std::setw(20) << error(sum_prog, sum2_prog, i) << std::endl;
 	}
 }
 
@@ -90,7 +89,7 @@ void blocks_averege(int n_iteration, int n_block, Random &random_generator, std:
 		sum_prog = acc / static_cast<double>(i + 1);
 		su2_prog = acc_2 / static_cast<double>(i + 1);
 		err_prog = error(sum_prog, su2_prog, i);
-		file_output << (i+1)*L << std::setw(20) << sum_prog << std::setw(20) << err_prog << std::endl;
+		file_output << (i+1) << std::setw(20) << sum_prog << std::setw(20) << err_prog << std::endl;
 	}
 }
 
@@ -126,7 +125,7 @@ void blocks_averege(int n_iteration, int n_block, Random &random_generator, std:
 		sum_prog = acc / static_cast<double>(i + 1);
 		su2_prog = acc_2 / static_cast<double>(i + 1);
 		err_prog = error(sum_prog, su2_prog, i);
-		file_output << (i+1)*L << std::setw(20) << sum_prog << std::setw(20) << err_prog << std::endl;
+		file_output << (i+1) << std::setw(20) << sum_prog << std::setw(20) << err_prog << std::endl;
 	}
 }
 

@@ -11,15 +11,15 @@ int main (int argc, char *argv[]){
 
     //Method 1 - Python mode (2 iteration needed to obtain 1 vector of blocks average)
 	std::vector<double> ave, ave_2;
-	average_calc(1e5, 100, ave, ave_2, rnd);
+	average_calc(1e7, 100, ave, ave_2, rnd);
 
 	std::ofstream file_out(std::string(ROOT_PATH) + "/Data/01.1a_mean_value_random_generator_M1.dat");
-	blocks_averege(1e5, 100, ave, ave_2, file_out);
+	blocks_averege(1e7, 100, ave, ave_2, file_out);
 	file_out.close();
     
     //Method 2 - Pointer function mode (1 iteration needed to obtain 1 vector of blocks average)
 	file_out.open(std::string(ROOT_PATH) +  "/Data/01.1a_mean_value_random_generator_M2.dat");
-	blocks_averege(1e5, 1e2, rnd, file_out, characteristic_function_simple);
+	blocks_averege(1e7, 1e2, rnd, file_out, characteristic_function_simple);
 	file_out.close();
 
 

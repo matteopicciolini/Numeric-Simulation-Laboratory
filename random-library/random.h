@@ -27,7 +27,7 @@ public:
   // Method to set the seed for the RNG
   void SetRandom(int * , int, int);
   // Method to save the seed to a file
-  void SaveSeed();
+  void SaveSeed(std::string filename = "seed.out");
   // Method to generate a random number in the range [0,1)
   double Rannyu(void);
   // Method to generate a random number in the range [min,max)

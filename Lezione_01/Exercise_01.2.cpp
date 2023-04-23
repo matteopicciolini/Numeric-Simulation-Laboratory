@@ -19,9 +19,9 @@ int main (int argc, char *argv[]){
 	int dim[4]= {1, 2, 10, 100};
 	double rand;
 
-	std::ofstream file_out_exp("../../Data/01.2_exponential.dat");
-	std::ofstream file_out_std("../../Data/01.2_standard.dat");
-	std::ofstream file_out_lrt("../../Data/01.2_lorentzian.dat");
+	std::ofstream file_out_exp(std::string(ROOT_PATH) + "/Data/01.2_exponential.dat");
+	std::ofstream file_out_std(std::string(ROOT_PATH) + "/Data/01.2_standard.dat");
+	std::ofstream file_out_lrt(std::string(ROOT_PATH) + "/Data/01.2_lorentzian.dat");
 
 	for(int i = 0; i < N; ++i){
 		sum_exp = 0.;

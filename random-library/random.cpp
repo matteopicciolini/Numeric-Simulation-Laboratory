@@ -22,10 +22,10 @@ Random :: Random(){}
 Random :: ~Random(){}
 // Default destructor, does not perform any action
 
-void Random :: SaveSeed(){
+void Random :: SaveSeed(std::string filename){
    // This function saves the current state of the random number generator to a file "seed.out"
    ofstream WriteSeed;
-   WriteSeed.open("seed.out");
+   WriteSeed.open(filename);
    if (WriteSeed.is_open()){
       WriteSeed << "RANDOMSEED	" << l1 << " " << l2 << " " << l3 << " " << l4 << endl;;
    } else cerr << "PROBLEM: Unable to open random.out" << endl;
