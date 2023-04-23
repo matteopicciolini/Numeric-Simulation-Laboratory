@@ -2,6 +2,23 @@
 ## Matteo Picciolini
 This directory contains the exercises of the Laboratory of Numeric Simulation A.A. 2022-2023.
 
+### Tree structure 
+Project
+├── src
+│   ├── file1.cpp
+│   ├── file2.cpp
+│   ├── file3.cpp
+│   └── file4.cpp
+├── include
+│   ├── header1.h
+│   ├── header2.h
+│   └── header3.h
+├── tests
+│   ├── test1.cpp
+│   ├── test2.cpp
+│   ├── test3.cpp
+│   └── test4.cpp
+└── README.md
 
 ### Prerequisites
 In order to execute the comnands described in this file you will need several tools, such as `cmake`, `make`, `gcc`. On a Debian-based system you can install them with:
