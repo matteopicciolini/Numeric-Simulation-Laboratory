@@ -3,22 +3,28 @@
 This directory contains the exercises of the Laboratory of Numeric Simulation A.A. 2022-2023.
 
 ### Tree structure 
-Project
-├── src
-│   ├── file1.cpp
-│   ├── file2.cpp
-│   ├── file3.cpp
-│   └── file4.cpp
-├── include
-│   ├── header1.h
-│   ├── header2.h
-│   └── header3.h
-├── tests
-│   ├── test1.cpp
-│   ├── test2.cpp
-│   ├── test3.cpp
-│   └── test4.cpp
-└── README.md
+```
+LSN_Picciolini
+├── Lezione_01
+│   ├── CMakeLists.txt
+│   ├── Exercise_01.1.cpp
+│   ├── Exercise_01.2.cpp
+│   ├── Exercise_01.3.cpp
+│   ├── Library_01.cpp
+│   └── Library_01.h
+├── Lezione_02
+├── Lezione_03
+├── Lezione_04
+├── Lezione_05
+├── Lezione_06
+├── Lezione_07
+├── Lezione_08
+├── Lezione_09
+├── Lezione_10
+├── Lezione_11
+├── Lezione_12
+├── Data
+```
 
 ### Prerequisites
 In order to execute the comnands described in this file you will need several tools, such as `cmake`, `make`, `gcc`. On a Debian-based system you can install them with:
