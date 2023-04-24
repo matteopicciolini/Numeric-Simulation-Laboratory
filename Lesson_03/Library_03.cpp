@@ -1,6 +1,5 @@
 #include "Library_03.h"
 
-
 void Random_Start(Random &random_generator){
 
 	int seed[4];
