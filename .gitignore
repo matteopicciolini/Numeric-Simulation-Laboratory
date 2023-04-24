@@ -255,5 +255,5 @@ pyrightconfig.json
 
 # Personal
 build/
-
+Dabuttare/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,cmake,c++,python,jupyternotebooks
