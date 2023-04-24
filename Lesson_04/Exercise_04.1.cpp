@@ -1,62 +1,13 @@
-#include <iostream>
-#include <fstream>
-#include <ostream>
-#include <cmath>
-#include <iomanip>
-#include <filesystem>
 #include "Library_04.h"
-#include <version_config.h>
-
-std::string random_lib_path = std::string(ROOT_PATH) + "/random-library/";
-std::string input_path, output_path, eq_str, input_form_eq_path;
-
 
 int main(int argc, char* argv[]){
 
-	//Usage and phase choosing
-	if(argc == 3){
-		phase = static_cast<std::string>(argv[1]);
-		eq = static_cast<std::string>(argv[2]);
-		if ((phase != "solid" && phase != "liquid" && phase != "gas") && (eq != "false" && eq != "true")){ 
-    	std::cerr << "Wrong usage. Usage: './Exercise_04.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
-			return -1;
-  	}
-	}
-	else{
-		std::cerr << "Wrong usage. Usage: './Exercise_04.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
-		return -1;
-	}
-  
-	if(eq == "true"){
-		std::cout << "You choose EQUILIBRATION mode" << std::endl;
-		input_path = "input/eq/" + phase + "/input." + phase;
-		output_path = "input/eq/" + phase + "/";
-		eq_str = "eq_";
-	}
-	else if (eq == "false"){
-		std::cout << "You choose SIMULATION mode" << std::endl;
-		input_form_eq_path = "input/eq/" + phase + "/";
-		input_path = "input/input." + phase;
-		output_path = "";
-		eq_str = "";
-	}
-	else{}
-
-	//delete old files
-	std::string pattern = "04.1_" + eq_str + phase;
-  std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
-	std::string confirm = "";
-	std::cout << "This program will delete files in Data with pattern '" + pattern + "'. Press <enter> to confirm." << std::endl;
-	std::cin.ignore();
-	for (auto& file : std::filesystem::directory_iterator(directory_path)) {
-			if (std::filesystem::is_regular_file(file) && file.path().filename().string().find(pattern) != std::string::npos) {
-					std::filesystem::remove(file.path());
-					std::cout << "Deleted file: " << file.path() << std::endl;
-			}
-	}
-	std::cout << std::endl;
-
-	//Inizialization
+  //Usage and phase choosing
+  Usage(argc, argv);
+	
+  pattern = "04.1_" + eq_str + phase;
+  Delete_old_files();
+	
   Input(); 
 	std::cout << std::endl;
 
@@ -66,13 +17,10 @@ int main(int argc, char* argv[]){
 	//--------------------------------------------------------------------------
 
 	//Start simulation
-  int nconf = 1;
-  for(int iblk = 1; iblk <= nblk; iblk++){
-		s = 0;
-
+  for(int iblk = 1; iblk <= nblk; ++iblk){
+		s = 0; //Set progressbar to 0
     Reset(iblk);   //Reset block averages
-
-    for(int istep = 1; istep <= nstep; istep++){
+    for(int istep = 1; istep <= nstep; ++istep){
 
       Move();
       Measure();
@@ -90,19 +38,58 @@ int main(int argc, char* argv[]){
 			}
 			//----------------------------------------------------------------------
     }
+    //write progress
 		std::cout << 	Green("Block number " + std::to_string(iblk) + " completed successfully. Progress: ▪▪▪▪▪▪▪▪▪▪ 100%") << std::endl;
     Averages(iblk);   //Print results for current block
   }
+  
   ConfFinal(); //Write final configuration
-
-  rnd.SaveSeed(output_path + "seed.out"); //Save seed
-
+  rnd.SaveSeed(output_path + "seed.out");
   return 0;
 }
 
+void Usage(int argc, char* argv[]){
+  if(argc == 3){
+		phase = static_cast<std::string>(argv[1]);
+		eq = static_cast<std::string>(argv[2]);
+		if ((phase != "solid" && phase != "liquid" && phase != "gas") && (eq != "false" && eq != "true")){ 
+    	std::cerr << "Usage: './Exercise_04.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+			exit(-1);
+  	}
+	}
+	else{
+		std::cerr << "Usage: './Exercise_04.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+		exit(-1);
+	}
+  
+	if(eq == "true"){
+		std::cout << "You choose EQUILIBRATION mode" << std::endl;
+		input_path = "input-output/eq/" + phase + "/input." + phase;
+		output_path = "input-output/eq/" + phase + "/";
+		eq_str = "eq_";
+	}
+	else if (eq == "false"){
+		std::cout << "You choose SIMULATION mode" << std::endl;
+		input_form_eq_path = "input-output/eq/" + phase + "/";
+		input_path = "input-output/input." + phase;
+		output_path = "";
+		eq_str = "";
+	}
+}
 
-
-
+void Delete_old_files(){
+  std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
+	std::string confirm = "";
+	std::cout << "This program will delete files in Data with pattern '" + pattern + "'. Press <enter> to confirm." << std::endl;
+	std::cin.ignore();
+	for (auto& file : std::filesystem::directory_iterator(directory_path)) {
+			if (std::filesystem::is_regular_file(file) && file.path().filename().string().find(pattern) != std::string::npos) {
+					std::filesystem::remove(file.path());
+					std::cout << "Deleted file: " << file.path() << std::endl;
+			}
+	}
+  std::cout << std::endl;
+}
 
 void Input(void){
 
@@ -177,7 +164,7 @@ void Input(void){
     for (int i = 0; i < npart; ++i) ReadVelocity >> vx[i] >> vy[i] >> vz[i];
   }
   else{
-    ReadConf.open("input/eq/config.in");
+    ReadConf.open("input-output/eq/config.in");
     std::cout << "Prepare velocities with center of mass velocity equal to zero " << std::endl;
     double sumv[3] = {0.0, 0.0, 0.0};
     for (int i = 0; i < npart; ++i)
@@ -455,11 +442,11 @@ void Averages(int iblk) //Print results for current block
     std::cout << "Block number " << iblk << std::endl;
     std::cout << "Acceptance rate " << accepted/attempted << std::endl << std::endl;
     
-    Epot.open(std::string(ROOT_PATH) + "/Data/04.1_" + eq_str + phase + "_epot.dat", std::ios::app);
-    Ekin.open(std::string(ROOT_PATH) + "/Data/04.1_" + eq_str + phase + "_ekin.dat", std::ios::app);
-    Temp.open(std::string(ROOT_PATH) + "/Data/04.1_" + eq_str + phase + "_temp.dat", std::ios::app);
-    Etot.open(std::string(ROOT_PATH) + "/Data/04.1_" + eq_str + phase + "_etot.dat", std::ios::app);
-    Press.open(std::string(ROOT_PATH) + "/Data/04.1_" + eq_str + phase + "_press.dat", std::ios::app);
+    Epot.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_epot.dat", std::ios::app);
+    Ekin.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_ekin.dat", std::ios::app);
+    Temp.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_temp.dat", std::ios::app);
+    Etot.open(std::string(ROOT_PATH) + "/Data/" + pattern +  "_etot.dat", std::ios::app);
+    Press.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_press.dat", std::ios::app);
     
     stima_pot = blk_av[iv] / blk_norm / (double)npart; //Potential energy
     glob_av[iv] += stima_pot;

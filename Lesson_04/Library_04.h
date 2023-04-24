@@ -8,13 +8,21 @@ _/    _/  _/_/_/  _/_/_/_/ email: Davide.Galli@unimi.it
 *****************************************************************
 *****************************************************************/
 
-#ifndef __fluid__
-#define __fluid__
+#pragma once
 
-//Random numbers
+#include <iostream>
+#include <fstream>
+#include <ostream>
+#include <cmath>
+#include <iomanip>
+#include <filesystem>
+#include <string>
+#include <version_config.h>
 #include "random.h"
+
 int seed[4];
 Random rnd;
+int nconf = 1;
 
 //parameters, observables
 const int m_props = 1000;
@@ -36,14 +44,14 @@ double vx[m_part],  vy[m_part],   vz[m_part];
 
 // thermodynamical state
 int npart;
-double beta,temp,energy,vol,rho,box,rcut;
+double beta, temp, energy, vol, rho, box, rcut;
 
 // simulation
 int iNVET, nstep, nblk, restart;
 double delta;
 
 //pigreco
-const double pi=3.1415927;
+const double pi = 3.1415927;
 
 //functions
 void Input(void);
@@ -58,9 +66,18 @@ double Boltzmann(double, double, double, int);
 double Pbc(double);
 double Error(double,double,int);
 double Force(int, int);
+void Usage(int argc, char* argv[]);
+void Delete_old_files();
 
+
+//Usage and filename
 std::string phase;
 std::string eq;
+std::string random_lib_path = std::string(ROOT_PATH) + "/random-library/";
+std::string input_path, output_path, eq_str, input_form_eq_path;
+std::string pattern;
+
+
 //------------------------Progress bar --------------------------
 std::string perc = "▪▪▪▪▪▪▪▪▪▪";
 
@@ -85,9 +102,6 @@ void Progress_bar(int& s, int& iblk, int& prog){
 }
 //------------------------------------------------------------------
 
-
-
-#endif
 
 /****************************************************************
 *****************************************************************
