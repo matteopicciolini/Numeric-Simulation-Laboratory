@@ -4,10 +4,8 @@ int main(int argc, char* argv[]){
 
   //Usage and phase choosing
   Usage(argc, argv);
-	
-  pattern = "04.1_" + eq_str + phase;
-  Delete_old_files();
-	
+  std::cout << std::endl;
+	//inizialization and delete files
   Input(); 
 	std::cout << std::endl;
 
@@ -42,7 +40,7 @@ int main(int argc, char* argv[]){
 		std::cout << 	Green("Block number " + std::to_string(iblk) + " completed successfully. Progress: ▪▪▪▪▪▪▪▪▪▪ 100%") << std::endl;
     Averages(iblk);   //Print results for current block
   }
-  
+
   ConfFinal(); //Write final configuration
   rnd.SaveSeed(output_path + "seed.out");
   return 0;
@@ -75,7 +73,12 @@ void Usage(int argc, char* argv[]){
 		output_path = "";
 		eq_str = "";
 	}
+  else{
+  std::cerr << "Usage: './Exercise_04.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+		exit(-1);
+  }
 }
+
 
 void Delete_old_files(){
   std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
@@ -100,7 +103,7 @@ void Input(void){
   std::cout << "Interatomic potential v(r) = 4 * [(1/r)^12 - (1/r)^6]" << std::endl << std::endl;
   std::cout << "Boltzmann weight exp(- beta * sum_{i<j} v(r_ij) ), beta = 1/T " << std::endl << std::endl;
   std::cout << "The program uses Lennard-Jones units " << std::endl;
-
+  std::cout << std::endl;
 //Read seed for random numbers
   int p1, p2;
   Primes.open(random_lib_path + "Primes");
@@ -120,6 +123,10 @@ void Input(void){
   Seed.close();
 
   ReadInput >> temp;
+
+  pattern = "04.1_" + eq_str + phase + "_" + std::to_string(temp).substr(0, 4);
+  Delete_old_files();
+
   beta = 1.0 / temp;
   std::cout << "Temperature = " << temp << std::endl;
 
@@ -441,13 +448,14 @@ void Averages(int iblk) //Print results for current block
     
     std::cout << "Block number " << iblk << std::endl;
     std::cout << "Acceptance rate " << accepted/attempted << std::endl << std::endl;
-    
+    if(eq == "false"){
     Epot.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_epot.dat", std::ios::app);
     Ekin.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_ekin.dat", std::ios::app);
-    Temp.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_temp.dat", std::ios::app);
     Etot.open(std::string(ROOT_PATH) + "/Data/" + pattern +  "_etot.dat", std::ios::app);
     Press.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_press.dat", std::ios::app);
-    
+    }
+    Temp.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_temp.dat", std::ios::app);
+
     stima_pot = blk_av[iv] / blk_norm / (double)npart; //Potential energy
     glob_av[iv] += stima_pot;
     glob_av2[iv] += stima_pot * stima_pot;
@@ -472,18 +480,20 @@ void Averages(int iblk) //Print results for current block
     glob_av[iw] += stima_pres;
     glob_av2[iw] += stima_pres * stima_pres;
     err_press = Error(glob_av[iw], glob_av2[iw], iblk);
-
+    
+    if(eq == "false"){
     //Potential energy per particle
-    Epot << std::setw(wd) << iblk <<  std::setw(wd) << stima_pot << std::setw(wd) << glob_av[iv]/(double)iblk << std::setw(wd) << err_pot << std::endl;
-    //Kinetic energy
-    Ekin << std::setw(wd) << iblk <<  std::setw(wd) << stima_kin << std::setw(wd) << glob_av[ik]/(double)iblk << std::setw(wd) << err_kin << std::endl;
-    //Total energy
-    Etot << std::setw(wd) << iblk <<  std::setw(wd) << stima_etot << std::setw(wd) << glob_av[ie]/(double)iblk << std::setw(wd) << err_etot << std::endl;
+      Epot << std::setw(wd) << iblk <<  std::setw(wd) << stima_pot << std::setw(wd) << glob_av[iv]/(double)iblk << std::setw(wd) << err_pot << std::endl;
+      //Kinetic energy
+      Ekin << std::setw(wd) << iblk <<  std::setw(wd) << stima_kin << std::setw(wd) << glob_av[ik]/(double)iblk << std::setw(wd) << err_kin << std::endl;
+      //Total energy
+      Etot << std::setw(wd) << iblk <<  std::setw(wd) << stima_etot << std::setw(wd) << glob_av[ie]/(double)iblk << std::setw(wd) << err_etot << std::endl;
+      //Pressure
+      Press << std::setw(wd) << iblk <<  std::setw(wd) << stima_pres << std::setw(wd) << glob_av[iw]/(double)iblk << std::setw(wd) << err_press << std::endl;
+    }
     //Temperature
     Temp << std::setw(wd) << iblk <<  std::setw(wd) << stima_temp << std::setw(wd) << glob_av[it]/(double)iblk << std::setw(wd) << err_temp << std::endl;
-    //Pressure
-    Press << std::setw(wd) << iblk <<  std::setw(wd) << stima_pres << std::setw(wd) << glob_av[iw]/(double)iblk << std::setw(wd) << err_press << std::endl;
-
+      
     std::cout << "----------------------------" << std::endl << std::endl;
 
     Epot.close();
