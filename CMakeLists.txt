@@ -12,5 +12,6 @@ add_subdirectory(Lesson_03)
 add_subdirectory(Lesson_04)
 add_subdirectory(Lesson_05)
 add_subdirectory(Lesson_06)
+add_subdirectory(Lesson_07)
 
 configure_file( ${CMAKE_SOURCE_DIR}/version_config.h.in ${CMAKE_BINARY_DIR}/version_config.h)

@@ -1,4 +1,4 @@
-add_executable (Exercise_05.1 Exercise_05.1.cpp Library_05.cpp)
+add_executable (Exercise_05.1 Exercise_05.1.cpp)
 target_link_libraries(Exercise_05.1 PRIVATE random-library)
 
 add_definitions(-D_VAR=\"${CMAKE_SOURCE_DIR}\")

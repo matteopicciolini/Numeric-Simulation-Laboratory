@@ -10,15 +10,15 @@ int main (int argc, char* argv[]){
     //}
 
     for(int i = 0; i < nblk; ++i){     
-        ResetAll();
+        ResetAllZero();
         for (int j = 0; j < nstep; ++j){           
             SavePos();    
             Move();
             Accumulate();
         }            
-        PrintAccRate(i); // acceptance rate
+        PrintRate(i);
         BlockAverages();
-        SaveDist(i); // save out block-averaged distances
+        SaveDist(i);
 
     }
 
@@ -51,19 +51,7 @@ void Input(){
   }
 
 
-    //delete old files
-    pattern = "05.1_" + prob_str + "_" + std::to_string(r[0]).substr(0, 4) + "_" + std::to_string(r[1]).substr(0, 4) + "_" + std::to_string(r[2]).substr(0, 4);
-    std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
-    std::string confirm = "";
-    std::cout << "This program will delete files in Data with pattern '" + pattern + "'. Press <enter> to confirm." << std::endl;
-    std::cin.ignore();
-    for (auto& file : std::filesystem::directory_iterator(directory_path)) {
-            if (std::filesystem::is_regular_file(file) && file.path().filename().string().find(pattern) != std::string::npos) {
-                    std::filesystem::remove(file.path());
-                    std::cout << "Deleted file: " << file.path() << std::endl;
-            }
-    }
-    std::cout << std::endl;    
+    
 
 
   steps = nstep * nblk;
@@ -79,7 +67,21 @@ void Input(){
   ReadInput.close();
 }
 
-void ResetAll(){
+void Delete_old_files(){
+    pattern = "05.1_" + prob_str + "_" + std::to_string(r[0]).substr(0, 4) + "_" + std::to_string(r[1]).substr(0, 4) + "_" + std::to_string(r[2]).substr(0, 4);
+    std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
+    std::cout << "This program will delete files in Data with pattern '" + pattern + "'. Press <enter> to confirm." << std::endl;
+    std::cin.ignore();
+    for (auto& file : std::filesystem::directory_iterator(directory_path)) {
+            if (std::filesystem::is_regular_file(file) && file.path().filename().string().find(pattern) != std::string::npos) {
+                    std::filesystem::remove(file.path());
+                    std::cout << "Deleted file: " << file.path() << std::endl;
+            }
+    }
+    std::cout << std::endl;    
+}
+
+void ResetAllZero(){
     //distances
     d = 0;
     de = 0; 
@@ -136,9 +138,9 @@ void Move(){
         xe[i] = ye[i] + dr_e[i];
     }
 
-    q = prob_gs(x) / prob_gs(y);
+    q = prob_ground(x) / prob_ground(y);
     A = std::min(1., q);
-    qe = prob_exc(xe) / prob_exc(ye);
+    qe = prob_excited(xe) / prob_excited(ye);
     Ae = std::min(1., qe);
     
     if(rnd.Rannyu() < A){
@@ -163,10 +165,10 @@ void Accumulate(){
     de += sqrt(re[0] * re[0] + re[1] * re[1] + re[2] * re[2]);
 }
 
-void PrintAccRate(int i){
-    std::cout << "Block # " << i+1 << std::endl;
-    std::cout << "                    (GrSt)  (ExSt)  " << std::endl;
-    std::cout << "Acceptance rates:   " << (double)accepted_gs/attempted_gs << "  " << (double)accepted_es/attempted_es << std::endl;
+void PrintRate(int i){
+    std::cout << "Block number " << i+1 << std::endl;
+    std::cout << "                    (Ground)  (Excited)  " << std::endl;
+    std::cout << "Acceptance rates:   " << static_cast<double>(accepted_gs) / attempted_gs << "    " << static_cast<double>(accepted_es) / attempted_es << std::endl;
     std::cout << "-----------------------------------" << std::endl;
 }
 
@@ -180,27 +182,28 @@ void BlockAverages(){
     var_prog_de += de * de;
 }
 
-void SaveDist(int i){
+void SaveDist(int blknum){
 
     std::ofstream WriteResultGS;
     WriteResultGS.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_Dist_Ground_State.dat", std::ios::app);
     std::ofstream WriteResultES;
     WriteResultES.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_Dist_Excited_State.dat", std::ios::app);
 
-    WriteResultGS << d << " " << mean_prog_d / (i + 1) << " " << Error(mean_prog_d / (i + 1), var_prog_d / (i + 1), i) << " " << std::endl;
-    WriteResultES << de << " " << mean_prog_de / (i + 1) << " " << Error(mean_prog_de / (i + 1), var_prog_de / (i + 1), i) << " " << std::endl;   
+    WriteResultGS << d << " " << mean_prog_d / (blknum + 1) << " " << Error(mean_prog_d / (blknum + 1), var_prog_d / (blknum + 1), blknum) << " " << std::endl;
+    WriteResultES << de << " " << mean_prog_de / (blknum + 1) << " " << Error(mean_prog_de / (blknum + 1), var_prog_de / (blknum + 1), blknum) << " " << std::endl;   
 
     WriteResultGS.close();
     WriteResultES.close();
 }
 
-double prob_gs(double x[3]){
+
+double prob_ground(double x[3]){
     double d = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
     double psi = pow(M_E, -d) / sqrt(M_PI);
     return psi * psi;
 }
 
-double prob_exc(double x[3]){
+double prob_excited(double x[3]){
     double d = sqrt(x[0] * x[0] + x[1] * x[1] + x[2] * x[2]);
     double costheta = x[2]/d;
     double psi = 1. / 8. * sqrt(2. / M_PI) * d * pow(M_E, -d / 2) * costheta;
