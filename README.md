@@ -92,7 +92,7 @@ make Exercise_XX.X.cpp
 │   ├── 🏗️ CMakeLists.txt
 │   ├── 🌟 Exercise_04.1.cpp
 │   ├── 📁 frames
-│   ├── 📁 input
+│   ├── 📁 input-output
 │   │   ├── 📁 eq
 │   │   │   ├── 📄 config.in
 │   │   │   ├── 📁 gas
@@ -124,6 +124,23 @@ make Exercise_XX.X.cpp
 │   ├── 🌟 Library_06.cpp
 │   ├── 📜 Library_06.h
 │   └── 📝 run_all_temp.sh
+├── 📁 Lesson_06
+│   ├── 🏗️ CMakeLists.txt
+│   ├── 🌟 Exercise_07.1.cpp
+│   ├── 📁 input-output
+│   │   ├── 📁 eq
+│   │   │   ├── 📄 config.in
+│   │   │   ├── 📁 gas
+│   │   │   │   └── 📄 input.gas
+│   │   │   ├── 📁 liquid
+│   │   │   │   └── 📄 input.liquid
+│   │   │   └── 📁 solid
+│   │   │       └── 📄 input.solid
+│   │   ├── 📄 input.gas
+│   │   ├── 📄 input.liquid
+│   │   └── 📄 input.solid
+│   ├── 🌟 Library_07.cpp
+│   ├── 📜 Library_07.h
 ├── 📁 random-library
 │   ├── 🏗️ CMakeLists.txt
 │   ├── 📄 config.final

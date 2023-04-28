@@ -5,9 +5,9 @@ int main (int argc, char* argv[]){
     Input();
 
     //equilibration
-    //for(int i = 0; i < 1000; ++i){
-    //    Move();
-    //}
+    for(int i = 0; i < 600000; ++i){
+        Move();
+    }
 
     for(int i = 0; i < nblk; ++i){     
         ResetAllZero();
@@ -50,10 +50,6 @@ void Input(){
     prob_str = "Gauss";
   }
 
-
-    
-
-
   steps = nstep * nblk;
 
   std::cout << "Total number of steps = " << steps << std::endl;
@@ -62,8 +58,9 @@ void Input(){
   std::cout << "Step lenght = " << L << std::endl;
   std::cout << "Initial position (GS) = (" << r[0] << " " << r[1] << " " << r[2] << ")" << std::endl;
   std::cout << "Initial position (ExSt) = (" << re[0] << " " << re[1] << " " << re[2] << ")" << std::endl;
-
   std::cout << std::endl;
+
+  Delete_old_files();
   ReadInput.close();
 }
 
@@ -189,8 +186,8 @@ void SaveDist(int blknum){
     std::ofstream WriteResultES;
     WriteResultES.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_Dist_Excited_State.dat", std::ios::app);
 
-    WriteResultGS << d << " " << mean_prog_d / (blknum + 1) << " " << Error(mean_prog_d / (blknum + 1), var_prog_d / (blknum + 1), blknum) << " " << std::endl;
-    WriteResultES << de << " " << mean_prog_de / (blknum + 1) << " " << Error(mean_prog_de / (blknum + 1), var_prog_de / (blknum + 1), blknum) << " " << std::endl;   
+    WriteResultGS << blknum << " " << d << " " << mean_prog_d / (blknum + 1) << " " << Error(mean_prog_d / (blknum + 1), var_prog_d / (blknum + 1), blknum) << " " << std::endl;
+    WriteResultES << blknum <<  " " << de << " " << mean_prog_de / (blknum + 1) << " " << Error(mean_prog_de / (blknum + 1), var_prog_de / (blknum + 1), blknum) << " " << std::endl;   
 
     WriteResultGS.close();
     WriteResultES.close();

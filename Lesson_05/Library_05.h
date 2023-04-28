@@ -143,6 +143,13 @@ void Random_Start(Random &random_generator);
 */
 double Error(double sum, double sum2, int iblk);
 
+/**
+ * @brief Deletes old files with a specific pattern in the "Data" directory. 
+ * The pattern is defined by the input arguments and consists of a prefix followed by three floating point numbers.
+ * The function prompts the user to confirm the deletion before proceeding.
+ * @param void
+ */
+void Delete_old_files();
 
 /**
  * @brief This function proposes a new step for the Monte Carlo simulation. 
