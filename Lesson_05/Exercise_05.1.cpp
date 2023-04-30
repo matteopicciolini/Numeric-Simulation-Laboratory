@@ -2,8 +2,13 @@
 
 int main (int argc, char* argv[]){
 
-    Input();
+    //Usage and phase choosing
+    Usage(argc, argv);
+    std::cout << std::endl;
 
+    Input();
+    std::cout << std::endl;
+    
     //equilibration
     for(int i = 0; i < 600000; ++i){
         Move();
