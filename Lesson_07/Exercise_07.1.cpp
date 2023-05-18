@@ -224,16 +224,14 @@ void Input(void){
     }
   }
   
-    v_tail = 8 * pi * rho * (1.0 / (9 * pow(rcut, 9)) - 1.0 / (3 * pow(rcut, 3))) * npart;
-    w_tail = 32 * pi * rho * (1.0 / (9 * pow(rcut, 9)) - 1.0 / (6 * pow(rcut, 3))) * 3 * npart;
-    std::cout << "Tail correction for the potential energy = " << vtail << std::endl;
-    std::cout << "Tail correction for the virial           = " << ptail << std::endl; 
+  v_tail = 8 * pi * rho * (1.0 / (9 * pow(rcut, 9)) - 1.0 / (3 * pow(rcut, 3))) * npart;
+  w_tail = 32 * pi * rho * (1.0 / (9 * pow(rcut, 9)) - 1.0 / (6 * pow(rcut, 3))) * 3 * npart;
     
 
-//Evaluate properties of the initial configuration
+  //Evaluate properties of the initial configuration
   Measure();
 
-//Print initial values for measured properties
+  //Print initial values for measured properties
   std::cout << "Initial potential energy = " << walker[iv] / (double)npart << std::endl;
   std::cout << "Initial temperature      = " << walker[it] << std::endl;
   std::cout << "Initial kinetic energy   = " << walker[ik] / (double)npart << std::endl;
@@ -381,20 +379,15 @@ void Measure() //Properties measurement
 
       if(dr < rcut){
         vij = 1.0/pow(dr,12) - 1.0/pow(dr,6);
-        w_ij = 1./pow(dr, 12) - 0.5/pow(dr, 6.0);
+        w_ij = 1.0/pow(dr,12) - 0.5/pow(dr,6);
         v += vij;
         w += w_ij;
       }
     }          
   }
 
-  //for (int i = 0; i < npart; ++i) kin += 0.5 * (vx[i] * vx[i] + vy[i] * vy[i] + vz[i] * vz[i]);
-
-  walker[iv] = 4.0 * v + v_tail; ; // Potential energy
-  //walker[ik] = kin; // Kinetic energy
-  //walker[it] = (2.0 / 3.0) * kin/(double)npart; // Temperature
-  //walker[ie] = 4.0 * v + kin;  // Total energy;
-  walker[iw] = w + w_tail;  //Pressure
+  walker[iv] = 4. * v + v_tail;
+  walker[iw] = 48. * w + w_tail;
 
   return;
 }
@@ -436,63 +429,38 @@ void Accumulate(void) //Update block averages
 void Averages(int iblk) //Print results for current block
 {
     
-   std::ofstream Epot, Ekin, Etot, Temp, Press;
+   std::ofstream Epot, Press;
    const int wd = 12;
     
     std::cout << "Block number " << iblk << std::endl;
     std::cout << "Acceptance rate " << accepted/attempted << std::endl << std::endl;
     if(eq == "false"){
     Epot.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_epot.dat", std::ios::app);
-    Ekin.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_ekin.dat", std::ios::app);
-    Etot.open(std::string(ROOT_PATH) + "/Data/" + pattern +  "_etot.dat", std::ios::app);
     Press.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_press.dat", std::ios::app);
     }
-    Temp.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_temp.dat", std::ios::app);
+    
 
     stima_pot = blk_av[iv] / blk_norm / (double)npart; //Potential energy
     glob_av[iv] += stima_pot;
     glob_av2[iv] += stima_pot * stima_pot;
     err_pot = Error(glob_av[iv], glob_av2[iv], iblk);
     
-    stima_kin = blk_av[ik] / blk_norm / (double)npart; //Kinetic energy
-    glob_av[ik] += stima_kin;
-    glob_av2[ik] += stima_kin * stima_kin;
-    err_kin = Error(glob_av[ik], glob_av2[ik], iblk);
-
-    stima_etot = blk_av[ie] / blk_norm / (double)npart; //Total energy
-    glob_av[ie] += stima_etot;
-    glob_av2[ie] += stima_etot * stima_etot;
-    err_etot = Error(glob_av[ie], glob_av2[ie], iblk);
-
-    stima_temp = blk_av[it] / blk_norm; //Temperature
-    glob_av[it] += stima_temp;
-    glob_av2[it] += stima_temp * stima_temp;
-    err_temp = Error(glob_av[it], glob_av2[it], iblk);
-    
-    stima_pres = blk_av[iw] / blk_norm; //Press
+    stima_pres = rho * temp + (blk_av[iw]/blk_norm)/(3.0*vol); //Pressure
     glob_av[iw] += stima_pres;
-    glob_av2[iw] += stima_pres * stima_pres;
-    err_press = Error(glob_av[iw], glob_av2[iw], iblk);
+    glob_av2[iw] += stima_pres*stima_pres;
+    err_press=Error(glob_av[iw],glob_av2[iw],iblk);
+    
     
     if(eq == "false"){
     //Potential energy per particle
       Epot << std::setw(wd) << iblk <<  std::setw(wd) << stima_pot << std::setw(wd) << glob_av[iv]/(double)iblk << std::setw(wd) << err_pot << std::endl;
-      //Kinetic energy
-      Ekin << std::setw(wd) << iblk <<  std::setw(wd) << stima_kin << std::setw(wd) << glob_av[ik]/(double)iblk << std::setw(wd) << err_kin << std::endl;
-      //Total energy
-      Etot << std::setw(wd) << iblk <<  std::setw(wd) << stima_etot << std::setw(wd) << glob_av[ie]/(double)iblk << std::setw(wd) << err_etot << std::endl;
-      //Pressure
+    //Pressure
       Press << std::setw(wd) << iblk <<  std::setw(wd) << stima_pres << std::setw(wd) << glob_av[iw]/(double)iblk << std::setw(wd) << err_press << std::endl;
     }
-    //Temperature
-    Temp << std::setw(wd) << iblk <<  std::setw(wd) << stima_temp << std::setw(wd) << glob_av[it]/(double)iblk << std::setw(wd) << err_temp << std::endl;
       
     std::cout << "----------------------------" << std::endl << std::endl;
 
     Epot.close();
-    Ekin.close();
-    Etot.close();
-    Temp.close();
     Press.close();
 }
 
