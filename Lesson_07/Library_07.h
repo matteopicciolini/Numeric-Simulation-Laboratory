@@ -37,6 +37,8 @@ int bin_index;
 const int n_props = 5;
 const int n_bins = (int)(m_props - n_props);
 double err_gr[n_bins];
+std::string invet_str;
+std::string print_instant;
 
 // averages
 double blk_av[m_props], blk_norm, accepted, attempted;

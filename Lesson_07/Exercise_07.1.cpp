@@ -47,16 +47,17 @@ int main(int argc, char* argv[]){
 }
 
 void Usage(int argc, char* argv[]){
-  if(argc == 3){
+  if(argc == 4){
 		phase = static_cast<std::string>(argv[1]);
 		eq = static_cast<std::string>(argv[2]);
+    print_instant = static_cast<std::string>(argv[3]);
 		if ((phase != "solid" && phase != "liquid" && phase != "gas") && (eq != "false" && eq != "true")){ 
-    	std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+    	std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration> <print_instant>' with <phase> = {solid, liquid, gas}, <equilibration> = {true, false} and <print_Instant> = {true, false}" << std::endl;
 			exit(-1);
   	}
 	}
 	else{
-		std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+		std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration> <print_instant>' with <phase> = {solid, liquid, gas}, <equilibration> = {true, false} and <print_Instant> = {true, false}" << std::endl;
 		exit(-1);
 	}
   
@@ -74,7 +75,7 @@ void Usage(int argc, char* argv[]){
 		eq_str = "";
 	}
   else{
-  std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration>' with <phase> = {solid, liquid, gas} and <equilibration> = {true, false}" << std::endl;
+    std::cerr << "Usage: './Exercise_07.1 <phase> <equilibration> <print_instant>' with <phase> = {solid, liquid, gas}, <equilibration> = {true, false} and <print_Instant> = {true, false}" << std::endl;
 		exit(-1);
   }
 }
@@ -113,6 +114,9 @@ void Input(void){
 	//Read input informations
   ReadInput.open(input_path);
   ReadInput >> iNVET;
+  if (iNVET == 0){
+    invet_str = "MD_";
+  }else{invet_str = "MC_";}
   ReadInput >> restart;
 
   if(restart) Seed.open(input_form_eq_path + "seed.out");
@@ -123,7 +127,7 @@ void Input(void){
 
   ReadInput >> temp;
 
-  pattern = "07.1_" + eq_str + phase + "_" + std::to_string(temp).substr(0, 4);
+  pattern = "07.1_" + invet_str + eq_str + phase + "_" + std::to_string(temp).substr(0, 4);
   Delete_old_files();
 
   beta = 1.0 / temp;
@@ -259,18 +263,18 @@ void Move()
 
   if(iNVET) // Monte Carlo (NVT) move
   {
-    for(int i=0; i<npart; ++i)
+    for(int i = 0; i < npart; ++i)
     {
     //Select randomly a particle (for C++ syntax, 0 <= o <= npart-1)
-      o = (int)(rnd.Rannyu()*npart);
+      o = (int)(rnd.Rannyu() * npart);
 
     //Old
-      energy_old = Boltzmann(x[o],y[o],z[o],o);
+      energy_old = Boltzmann(x[o], y[o], z[o], o);
 
     //New
-      x[o] = Pbc( x[o] + delta*(rnd.Rannyu() - 0.5) );
-      y[o] = Pbc( y[o] + delta*(rnd.Rannyu() - 0.5) );
-      z[o] = Pbc( z[o] + delta*(rnd.Rannyu() - 0.5) );
+      x[o] = Pbc( x[o] + delta * (rnd.Rannyu() - 0.5) );
+      y[o] = Pbc( y[o] + delta * (rnd.Rannyu() - 0.5) );
+      z[o] = Pbc( z[o] + delta * (rnd.Rannyu() - 0.5) );
 
       energy_new = Boltzmann(x[o], y[o], z[o],o);
 
@@ -295,9 +299,9 @@ void Move()
     double fx[m_part], fy[m_part], fz[m_part];
 
     for(int i = 0; i < npart; ++i){ //Force acting on particle i
-      fx[i] = Force(i,0);
-      fy[i] = Force(i,1);
-      fz[i] = Force(i,2);
+      fx[i] = Force(i, 0);
+      fy[i] = Force(i, 1);
+      fz[i] = Force(i, 2);
     }
 
     for(int i = 0; i < npart; ++i){ //Verlet integration scheme
@@ -419,17 +423,17 @@ void Measure() //Properties measurement
   walker[it] = (2.0 / 3.0) * kin/(double)npart; // Temperature
   walker[ie] = 4.0 * v + kin;  // Total energy;
   walker[iw] = 48.0/(3.0 * vol) * w + rho * walker[it];  //Pressure
+  //std::cout << walker[iv] << std::endl;
+  if(print_instant == "true"){
+    instant_epot.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_instant_epot.dat", std::ios::app);
+    instant_pres.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_instant_pres.dat", std::ios::app);
 
+    instant_epot << walker[iv] / (int) npart + v_tail << std::endl;
+    instant_pres << walker[iw] + w_tail << std::endl;
 
-  instant_epot.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_instant_epot.dat", std::ios::app);
-  instant_pres.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_instant_pres.dat", std::ios::app);
-
-  instant_epot << walker[iv] / (int) npart + v_tail << std::endl;
-  instant_pres << walker[iw] + w_tail << std::endl;
-
-  instant_epot.close();
-  instant_pres.close();
-
+    instant_epot.close();
+    instant_pres.close();
+  }
 
   return;
 }
@@ -517,9 +521,9 @@ void Averages(int iblk) //Print results for current block
     //Potential energy per particle
       Epot << std::setw(wd) << iblk <<  std::setw(wd) << stima_pot << std::setw(wd) << glob_av[iv]/(double)iblk << std::setw(wd) << err_pot << std::endl;
       //Kinetic energy
-      Ekin << std::setw(wd) << iblk <<  std::setw(wd) << stima_kin << std::setw(wd) << glob_av[ik]/(double)iblk << std::setw(wd) << err_kin << std::endl;
+      //Ekin << std::setw(wd) << iblk <<  std::setw(wd) << stima_kin << std::setw(wd) << glob_av[ik]/(double)iblk << std::setw(wd) << err_kin << std::endl;
       //Total energy
-      Etot << std::setw(wd) << iblk <<  std::setw(wd) << stima_etot << std::setw(wd) << glob_av[ie]/(double)iblk << std::setw(wd) << err_etot << std::endl;
+      //Etot << std::setw(wd) << iblk <<  std::setw(wd) << stima_etot << std::setw(wd) << glob_av[ie]/(double)iblk << std::setw(wd) << err_etot << std::endl;
       //Pressure
       Press << std::setw(wd) << iblk <<  std::setw(wd) << stima_pres << std::setw(wd) << glob_av[iw]/(double)iblk << std::setw(wd) << err_press << std::endl;
 
@@ -593,6 +597,6 @@ double Pbc(double r)  //Algorithm for periodic boundary conditions with side L=b
 }
 
 double Error(double sum, double sum2, int iblk)
-{
+{   if (iblk == 1) return 0.0;
     return sqrt(fabs(sum2/(double)iblk - pow(sum / (double)iblk, 2)) / (double)iblk);
 }
