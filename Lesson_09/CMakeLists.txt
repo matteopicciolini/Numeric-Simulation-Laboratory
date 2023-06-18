@@ -1,4 +1,4 @@
-add_executable (Exercise_09.1 Exercise_09.1.cpp Library_09.cpp)
+add_executable (Exercise_09.1 Exercise_09.1.cpp Library_09.cpp Chromosome_test.cpp)
 target_link_libraries(Exercise_09.1 PRIVATE random-library)
 
 add_definitions(-D_VAR=\"${CMAKE_SOURCE_DIR}\")

@@ -24,11 +24,26 @@ void Random_Start(Random &random_generator){
 	} else {std::cerr << "PROBLEM: Unable to open seed.in" << std::endl;}
 }
 
-Chromosome::Chromosome(){}
-Chromosome::~Chromosome(){}
+Chromosome::Chromosome(){
+    this->n_genes = N_genes;
+    this->gen = new int[this->n_genes];
+    for (int i = 0; i < this->n_genes; ++i) {
+        gen[i] = 0;
+    }
+}
+Chromosome::Chromosome(int n_genes){
+    this->n_genes = n_genes;
+    this->gen = new int[n_genes];
+    for (int i = 0; i < n_genes; ++i) {
+        gen[i] = 0;
+    }
+}
+Chromosome::~Chromosome(){
+    delete[] this->gen;
+}
 
-void Chromosome::set_gen(int vec[n_genes]){
-    for(int i = 0; i < this->n_genes; ++i) this->gen[i] = vec[i];
+void Chromosome::set_gen(const int* vec){
+    for (int i = 0; i < this->n_genes; ++i) this->gen[i] = vec[i];
 }
 
 void Chromosome::set_fitness(double fitness){ 
@@ -52,7 +67,7 @@ int Chromosome::get_n_genes(){
 }
 
 int Chromosome::get_gen(int i){
-    return this->gen[i];
+    return this->gen[this->pbc(i)];
 }
 
 void Chromosome::print(){
@@ -117,7 +132,7 @@ void Chromosome::reverse(int position, int m){
         block[j] = this->gen[this->pbc(position + j)];
     }
 
-    // riempio al contrario il buco lasciato dal blocco
+    // riempio al contrario lo spazio vuoto lasciato dal blocco
     for(int i = 0; i < m; ++i){
         this->gen[this->pbc(position + i)] = block[(m - 1) - i];
     }
@@ -146,12 +161,10 @@ void Chromosome::shift(int position, int m, int shift){
     }
 
     // [1 2 5 2 5]
-    // shifto n volte i geni complementari per riempire il buco...
+    // shifto n volte i geni complementari per riempire il vettore...
     for(int i = 0; i < shift; ++i){
         this->gen[this->pbc(position + i)] = this->gen[this->pbc(position + m + i)];
     }
-
-    this->print();
 
     // ... e rimetto il blocco
     //[1 2 5 4 3]
@@ -207,12 +220,12 @@ void Chromosome::permutate(int position1, int position2, int m){
 
     int block[m];
 
-    // metto da parte il blocco da swappare
+    // metto da parte il blocco da permutare
     for(int j = 0; j < m; ++j){
         block[j] = this->gen[this->pbc(position1 + j)];
     } 
 
-    // riempio il buco lasciato dal blocco...
+    // riempio lo spazio vuoto lasciato dal blocco...
     for(int i = 0; i < m; ++i){
         this->gen[this->pbc(position1 + i)] = this->gen[this->pbc(position2 + i)];
     }
@@ -221,4 +234,56 @@ void Chromosome::permutate(int position1, int position2, int m){
     for(int i = 0; i < m; ++i){
         this->gen[this->pbc(position2 + i)] = block[i];
     }
+}
+
+void Chromosome::crossover(int position, int len, Chromosome chromosome2){
+    if(position == 0) {
+        std::cerr << "Chromosome::Crossover : can't move first gene." << std::endl;
+        exit(0);
+    }
+
+    int block[len];
+    //int block2[len];
+
+    // 1. cut their paths at the same position:
+    //    metto da parte i blocchi da swappare
+    //    (conservando la prima parte)
+    for(int j = 0; j < len; ++j){
+        block[j] = this->gen[this->pbc(position + j)];
+        //block2[j] = chromosome2.Gen[Pbc(pos+j)];
+    } 
+
+    // 2. complete the paths with the missing cities adding them in the **order** 
+    //    in which they appear in the consort (vale anche se sono separati!):
+    int count1 = 0;
+    //int count2 = 0;
+    
+    for(int j = 1; j < this->n_genes; ++j)
+    {
+        // ciclo sui geni nei blocchi 
+        for(int i = 0; i < len; ++i){
+            // quando trovo nell'altro genitore il gene presente
+            // nel blocco, lo salvo nel buco scavato all'inizio
+            if(chromosome2.get_gen(j) == block[i] ){
+                this->gen[this->pbc(position + count1)] = chromosome2.get_gen(j);
+                count1++;
+            }
+            //if(Gen[Pbc(j)] == block2[i] ){ // se il crossover modifica solo il cromosoma parent1, questo ciclo non serve
+            //   chromosome2.Gen[Pbc(pos+count2)] = Gen[Pbc(j)];
+            //   count2++;
+            //}
+        }
+    } 
+}
+
+bool Chromosome::equals(Chromosome& chromosome2) {
+    if (chromosome2.get_n_genes() != this->n_genes) {
+        return false;
+    }
+    for (int i = 0; i < this->n_genes; ++i) {
+        if (chromosome2.get_gen(i) != this->get_gen(i)) {
+            return false;
+        }
+    }
+    return true;
 }
