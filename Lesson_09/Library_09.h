@@ -23,19 +23,6 @@ static const double Mutation_Probability[6] = {
     };
 static const double expon = 6.0;
 
-// FUNZIONI
-void swap(Chromosome& a, Chromosome& b);
-void Random_Start(Random &random_generator);
-int partition(Population *pop, int low, int high);
-void quickSort(Population *pop, int low, int high);
-void Delete_old_files(std::string pattern);
-void Usage(int argc, char* argv[], std::string &circ, std::string &print_city);
-void Progress_bar(int& s, int& prog);
-std::string Red(std::string red);
-std::string Gray(std::string gray);
-std::string Green(std::string green);
-std::string intToStringWithLeadingZeros(int value, int width);
-
 // CLASSI
 
 class Chromosome {
@@ -100,7 +87,7 @@ public:
 class Task {
 
 private:
-    static const int n_cities = Ngenes
+    static const int n_cities = Ngenes;
     double cities_x[n_cities];
     double cities_y[n_cities];
     std::string task;
@@ -122,3 +109,16 @@ public:
     void sort_population(Population *pop);
     void load_cities(std::string filename);
 };
+
+// FUNZIONI
+void swap(Chromosome& a, Chromosome& b);
+void Random_Start(Random &random_generator);
+int partition(Population *pop, int low, int high);
+void quickSort(Population *pop, int low, int high);
+void Delete_old_files(std::string pattern);
+void Usage(int argc, char* argv[], std::string &circ, std::string &print_city);
+void Progress_bar(int& s, int& prog);
+std::string Red(std::string red);
+std::string Gray(std::string gray);
+std::string Green(std::string green);
+std::string intToStringWithLeadingZeros(int value, int width);
