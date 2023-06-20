@@ -2,7 +2,6 @@
 #include "Chromosome_test.h"
 
 
-
 int main (int argc, char* argv[]){
     std::string circ;
     std::string print_city;

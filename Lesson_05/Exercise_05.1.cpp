@@ -3,8 +3,8 @@
 int main (int argc, char* argv[]){
 
     //Usage and phase choosing
-    Usage(argc, argv);
-    std::cout << std::endl;
+    //Usage(argc, argv);
+    //std::cout << std::endl;
 
     Input();
     std::cout << std::endl;

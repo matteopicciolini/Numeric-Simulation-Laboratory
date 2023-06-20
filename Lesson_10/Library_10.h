@@ -9,3 +9,5 @@
 #include <string>
 #include <version_config.h>
 #include "random.h"
+#include <mpi.h>
+
