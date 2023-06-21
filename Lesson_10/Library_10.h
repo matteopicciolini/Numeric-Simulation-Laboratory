@@ -10,18 +10,20 @@
 #include <version_config.h>
 #include "random.h"
 #include <mpi.h>
+#include <chrono>
+#include <thread>
 
 
 //COSTANTI
-static const int NindPop = 300; //Numero di individui per popolazione
-static const int Ngenes = 34; // numero di città
+static const int NindPop = 5000; //Numero di individui per popolazione
+static const int Ngenes = 50; // numero di città
 static const int NGeneration = 500; // numero di generazioni
-static const double Mutation_Probability[6] = {
+static const double Mutation_Probability[5] = {
     0.1, // swap
     0.1, // reverse
     0.2, // shift
-    0.4, // permutate
-    0.6  // crossover
+    0.2, // permutate
+    0.5  // crossover
     };
 static const double expon = 6.0;
 
@@ -100,9 +102,9 @@ public:
     void generate_circular_cities(Random rnd, double radius = 1.);
     void generate_squared_cities(Random rnd);
 
-    void print_cities(int generation, Chromosome chromosome, int rank);
-    void print_bests_len_ave(int generation, int part, Population population, int rank);
-    void print_best_len(int generation, Population population, int rank);
+    void print_cities(int generation, Chromosome chromosome, int rank, std::string migr);
+    void print_bests_len_ave(int generation, int part, Population population, int rank, std::string migr);
+    void print_best_len(int generation, Population population, int rank, std::string migr);
 
     void eval_fitness(Chromosome &chromosome);
     void eval(Population &population);
@@ -117,7 +119,7 @@ int partition(Population *population, int low, int high);
 void quickSort(Population *population, int low, int high);
 void Delete_old_files(std::string pattern);
 void Usage(int argc, char* argv[], std::string &print_city, std::string &migrate, int &migration_freq);
-void Progress_bar(int& s, int& prog);
+void Progress_bar(int& s, int& prog, int rank);
 std::string Red(std::string red);
 std::string Gray(std::string gray);
 std::string Green(std::string green);

@@ -66,10 +66,10 @@ std::string Red(std::string red){
 	return std::string("\033[1;31m") + red + "\033[0m";
 }
 
-void Progress_bar(int& s, int& prog){
-    std::string perc = "▪▪▪▪▪▪▪▪▪▪";
-    std::cout << Red("Genetic Algoritm is running. Progress: ");
-	std::cout << Green(perc.substr(0, 3 * ++s));
+void Progress_bar(int& s, int& prog, int rank){
+    std::string perc = "▪▪▪▪▪▪▪▪▪▪▪";
+    std::cout << Red("Genetic Algoritm is running. Progress rank n " + std::to_string(rank) + ": ");
+	std::cout << Green(perc.substr(0, 3 * s++));
 	std::cout << Gray(perc.substr(3 * s, 3 * 10));
 	std::cout << " " << int(prog * 100.0 / NGeneration) << " %\r";
 	std::cout.flush();
@@ -78,15 +78,16 @@ void Progress_bar(int& s, int& prog){
 void Delete_old_files(std::string pattern){
     std::filesystem::path directory_path = std::string(ROOT_PATH) + "/Data";
 	std::string confirm = "";
-	std::cout << "This program will delete files in Data with pattern '" + pattern + "'. Press <enter> to confirm." << std::endl;
-	std::cin.ignore();
+	std::cout << "This program will delete files in Data/ with pattern '" + pattern + "'." << std::endl;
+	//std::cin.ignore();
 	for (auto& file : std::filesystem::directory_iterator(directory_path)) {
 			if (std::filesystem::is_regular_file(file) && file.path().filename().string().find(pattern) != std::string::npos) {
 					std::filesystem::remove(file.path());
 					std::cout << "Deleted file: " << file.path() << std::endl;
 			}
 	}
-  std::cout << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    //std::cout << std::endl;
 }
 
 void Usage(int argc, char* argv[], std::string &print_city, std::string &migrate, int &migration_freq){
@@ -473,12 +474,11 @@ void Task::load_cities(std::string filename){
 }
 
 // stampa le coordinate delle città nell'ordine indicato da un cromosoma
-void Task::print_cities(int generation, Chromosome chr, int rank){
+void Task::print_cities(int generation, Chromosome chr, int rank, std::string migr){
 
     std::ofstream stream;
-    stream.open(std::string(ROOT_PATH) + "/Data/10.1_city_coord_" 
-    + intToStringWithLeadingZeros(generation + 1, 3) 
-    + "_" + std::to_string(rank) + ".dat");
+    stream.open(std::string(ROOT_PATH) + "/Data/10.1_" + "city_coord_" + migr + "_" 
+    + std::to_string(rank) + "_" + intToStringWithLeadingZeros(generation + 1, 3) + ".dat");
 
     int seq;
     for(int i = 0; i < n_cities; ++i){
@@ -489,17 +489,17 @@ void Task::print_cities(int generation, Chromosome chr, int rank){
 }
 
 // stampa la lunghezza media della migliore metà di individui in una popolazione
-void Task::print_bests_len_ave(int generation, int part, Population pop, int rank){
+void Task::print_bests_len_ave(int generation, int part, Population pop, int rank, std::string migr){
     std::ofstream str;
-    str.open(std::string(ROOT_PATH) + "/Data/10.1_best_len_average_" + std::to_string(rank) + ".dat", std::ios_base::app);
+    str.open(std::string(ROOT_PATH) + "/Data/10.1_" + migr + "_" + std::to_string(rank) + "_best_len_average" + ".dat", std::ios_base::app);
     str << generation + 1 << " " << pop.best_len_ave << std::endl;
     str.close();
 }
 
 // Stampa la lunghezza del miglior individuo di una popolazione
-void Task::print_best_len(int generation, Population pop, int rank){
+void Task::print_best_len(int generation, Population pop, int rank, std::string migr){
     std::ofstream str;
-    str.open(std::string(ROOT_PATH) + "/Data/10.1_best_len_" + std::to_string(rank) + ".dat", std::ios_base::app);
+    str.open(std::string(ROOT_PATH) + "/Data/10.1_" + migr + "_" + std::to_string(rank) + "_best_len" + ".dat", std::ios_base::app);
     str << generation  + 1 << " " << pop.best_len << std::endl;
     str.close();
 }

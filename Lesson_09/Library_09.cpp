@@ -69,7 +69,7 @@ std::string Red(std::string red){
 void Progress_bar(int& s, int& prog){
     std::string perc = "▪▪▪▪▪▪▪▪▪▪";
     std::cout << Red("Genetic Algoritm is running. Progress: ");
-	std::cout << Green(perc.substr(0, 3 * ++s));
+	std::cout << Green(perc.substr(0, 3 * s++));
 	std::cout << Gray(perc.substr(3 * s, 3 * 10));
 	std::cout << " " << int(prog * 100.0 / NGeneration) << " %\r";
 	std::cout.flush();
@@ -471,27 +471,6 @@ void Task::generate_cities(Random rnd){
     }
 }
 
-void Task::load_cities(std::string filename){
-    std::ifstream coord;
-    coord.open(filename);
-    
-    double pos;
-
-    if(coord.is_open()){
-        for(int i = 0; i < n_cities; ++i){
-            coord >> pos;
-            cities_x[i] = pos;
-            coord >> pos;
-            cities_y[i] = pos;
-        }
-    }
-    else{
-        std::cout << "Unable to read "+ filename + ". Exit." << std::endl; 
-        exit(-1);
-    }
-
-    coord.close();
-}
 
 // stampa le coordinate delle città nell'ordine indicato da un cromosoma
 void Task::print_cities(int generation, Chromosome chr){

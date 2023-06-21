@@ -14,14 +14,14 @@
 static const int NindPop = 300; //Numero di individui per popolazione
 static const int Ngenes = 34; // numero di città
 static const int NGeneration = 500; // numero di generazioni
-static const double Mutation_Probability[6] = {
+static const double Mutation_Probability[5] = {
     0.1, // swap
     0.1, // reverse
     0.2, // shift
     0.4, // permutate
     0.6  // crossover
     };
-static const double expon = 6.0;
+static const double expon = 20.0;
 
 // CLASSI
 
@@ -107,7 +107,6 @@ public:
     void eval_fitness(Chromosome &chr);
     void eval(Population &pop);
     void sort_population(Population *pop);
-    void load_cities(std::string filename);
 };
 
 // FUNZIONI

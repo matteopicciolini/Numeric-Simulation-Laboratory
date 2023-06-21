@@ -105,7 +105,7 @@ std::string Red(std::string red){
 
 void Progress_bar(int& s, int& iblk, int& prog){
 	std::cout << Red("Block number " + std::to_string(iblk) + ". Progress: ");
-	std::cout << Green(perc.substr(0, 3 * ++s));
+	std::cout << Green(perc.substr(0, 3 * s++));
 	std::cout << Gray(perc.substr(3 * s, 3 * 10));
 	std::cout << " " << int(prog * 100.0 / nstep) << " %\r";
 	std::cout.flush();
