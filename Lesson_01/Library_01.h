@@ -64,9 +64,11 @@ void blocks_averege(int n_iteration, int n_block, std::vector<double> &ave, std:
  * @brief This method calculates the sum of random numbers generated using 
  * the provided random generator. 
  * It is a simple characteristic function used in the Monte Carlo simulation.
+ * This functions in used as a pointer function for "blocks_average" function.
+ * 
  * @param sum a reference to a double representing the sum of random numbers (updated by the method).
  * @param random_generator a reference to a Random object used for generating random numbers.
-
+ * 
 */
 void characteristic_function_simple(double &sum, Random &random_generator);
 
@@ -89,6 +91,7 @@ void blocks_averege(int n_iteration, int n_block, Random &random_generator, std:
  * @brief This method calculates the sum of squared deviations from a random 
  * number generated using the provided random generator. 
  * It is a characteristic function used in the Monte Carlo simulation.
+ * This functions in used as a pointer function for "blocks_average" function.
  * 
  * @param sum a reference to a double representing the sum of squared deviations (updated by the method).
  * @param random_generator a reference to a Random object used for generating random numbers.
@@ -144,6 +147,7 @@ void blocks_averege(int n_iteration, int n_block, Random &random_generator, std:
  * random generator. It calculates the number of successful hints (when the needle 
  * crosses a line) given the current number of hints. 
  * The number of successful hints is updated accordingly.
+ * This functions in used as a pointer function for "blocks_average" function.
  * 
  * @param nhint a reference to a double representing the number of hints (updated by the method).
  * @param random_generator a reference to a Random object used for generating random numbers.
@@ -155,6 +159,7 @@ void characteristic_function_buffon(double& nhint, Random & random_generator);
  * in a Buffon's needle experiment given the total distance (sum of distances) 
  * and the number of hints. 
  * It updates the average distance and resets the number of hints.
+ * This functions in used as a pointer function for "blocks_average" function.
  * 
  * @param ave_i a reference to a double representing the average distance (updated by the method).
  * @param n_hint a reference to a double representing the number of hints (reset by the method).

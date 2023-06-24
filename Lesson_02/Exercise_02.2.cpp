@@ -35,16 +35,16 @@ int main (int argc, char *argv[]){
     //blocking average
     double sum, sum2, err_prog;
     for (int k = 0; k < n_steps; ++k){
-            // fix k, calc average in a block
-            sum = 0.;
-            sum2 = 0.;
-            for (int i = 0; i < n_blocks; ++i){
-                sum += matrix_path_discrete[k][i]/n_blocks;
-                sum2 += pow(matrix_path_discrete[k][i], 2)/n_blocks;
-            }
-            err_prog = error(sum, sum2, n_blocks)/(2 * sqrt(sum));
-            file_out_r_module_square_discrete << (k + 1)<< std::setw(20) << sqrt(sum) << std::setw(20) << err_prog << std::endl;
+        // fix k, calc average in a block
+        sum = 0.;
+        sum2 = 0.;
+        for (int i = 0; i < n_blocks; ++i){
+            sum += matrix_path_discrete[k][i]/n_blocks;
+            sum2 += pow(matrix_path_discrete[k][i], 2)/n_blocks;
         }
+        err_prog = error(sum, sum2, n_blocks)/(2 * sqrt(sum));
+        file_out_r_module_square_discrete << (k + 1)<< std::setw(20) << sqrt(sum) << std::setw(20) << err_prog << std::endl;
+    }
 
 
 
@@ -83,6 +83,9 @@ int main (int argc, char *argv[]){
         file_out_r_module_square_continue << (k + 1)<< std::setw(20) << sqrt(sum) << std::setw(20) << err_prog << std::endl;
     }
 
+
+
+
     //Let's simulate a 3D Random Walk
 
 	std::vector<double> cartesian_coordinates_continue(3);
@@ -106,6 +109,7 @@ int main (int argc, char *argv[]){
 	file_out_cont.close();
 
 
+    //Extractions on the unit sphere
 
     std::ofstream file_out_distr_unif_sphere(std::string(ROOT_PATH) + "/Data/02.2_distr_unif_sphere.dat");
     std::ofstream file_out_distr_non_unif_sphere(std::string(ROOT_PATH) + "/Data/02.2_distr_non_unif_sphere.dat");
