@@ -15,5 +15,5 @@
   ReadInput >> rho;
   ReadInput >> rcut;
   ReadInput >> delta;
-  ReadInput >> nblk;
-  ReadInput >> nstep;
+  ReadInput >> nblk; 50
+  ReadInput >> nstep; 2000
