@@ -54,17 +54,102 @@ double delta;
 const double pi = 3.1415927;
 
 //functions
+
+/**
+ * @brief Reads the input parameters and initializes the simulation.
+ * This function reads the input parameters from the appropriate files and initializes the simulation.
+ * It sets up the necessary variables, arrays, and random number generator seed.
+ * The input files used are "Primes" for random number generator primes,
+ * "seed.in" or "seed.out" for the random number generator seed,
+ * and "config.in" for the initial configuration.
+ * The function also calculates and prints some initial values for measured properties.
+ */
 void Input(void);
+
+/**
+ * @brief Resets the block averages and other variables for a new block.
+ * This function resets the block averages, as well as other variables 
+ * such as the number of attempted and accepted moves,
+ * to prepare for a new block of measurements.
+ * If it is the first block (iblk == 1), it also resets the global averages.
+ * 
+ * @param iblk The index of the current block.
+ * 
+*/
 void Reset(int);
+
+
+/**
+ * @brief Updates the block averages with the current measurements.
+ * This function updates the block averages with the current measurements.
+ * It adds the values of the measured properties in the walker array to the blk_av array,
+ * and increments the blk_norm variable by 1.
+*/
 void Accumulate(void);
+
+/**
+ * @brief Computes the averages of the measured properties for the current block.
+ * 
+ * This function computes the averages of the measured properties for the current block
+ * by dividing the accumulated values in the `blk_av` array by the `blk_norm` variable.
+ * It also computes the errors on the averages using the blocking method.
+ * The computed averages and errors are stored in the `ave` and `err` arrays, respectively.
+ */
 void Averages(int);
+
+/**
+ * @brief Performs a Monte Carlo or Molecular Dynamics move.
+ * This function performs a Monte Carlo move or a Molecular Dynamics move
+ * depending on the value of the flag iNVET.
+ * In the Molecular Dynamics move, the Verlet integration scheme is used to update the particle positions and velocities.
+ * Forces acting on each particle are computed using the Lennard-Jones potential.
+ * 
+ */
 void Move(void);
+
+/**
+ * @brief Writes the final configuration to a file.
+ * 
+ * This function writes the final configuration of the system to a file named "config.final".
+ * The configuration includes the positions of all particles.
+ */
 void ConfFinal(void);
 void ConfXYZ(int);
+
+/**
+ * @brief Measures the properties of the system.
+ * This function measures the properties of the system, including the potential energy, kinetic energy,
+ * temperature, total energy, and pressure.
+ * The measured values are stored in the walker array.
+*/
 void Measure(void);
+
+/**
+ * @brief Computes the potential energy of a particle.
+ * Given the position of a particle ip and the coordinates of all other particles,
+ * this function computes the potential energy of the particle using the Lennard-Jones potential.
+ * It returns the computed potential energy.
+ * @param xx The x-coordinate of the particle.
+ * @param yy The y-coordinate of the particle.
+ * @param zz The z-coordinate of the particle.
+ * @param ip The index of the particle.
+ * @return The potential energy of the particle.
+*/
 double Boltzmann(double, double, double, int);
 double Pbc(double);
 double Error(double,double,int);
+
+/**
+ * @brief Computes the force acting on a particle.
+ * Given the index of a particle ip and the direction idir (0 for x, 1 for y, 2 for z),
+ * this function computes the force acting on the particle in the specified direction.
+ * The force is computed as the negative gradient of the potential energy.
+ * It returns the computed force.
+ * @param ip The index of the particle.
+ * @param idir The direction of the force (0 for x, 1 for y, 2 for z).
+ * @return The force acting on the particle in the specified direction.
+*/
+
 double Force(int, int);
 void Usage(int argc, char* argv[]);
 void Delete_old_files();
