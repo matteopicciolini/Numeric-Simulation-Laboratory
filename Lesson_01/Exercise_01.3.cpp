@@ -7,7 +7,7 @@ int main (int argc, char *argv[]){
 	Random_Start(rnd);
 
     //Pointer function method
-    std::ofstream file_out("../../Data/01.3_buffon.dat");
+    std::ofstream file_out(std::string(ROOT_PATH) + "/Data/01.3_buffon.dat");
     blocks_averege(1e5, 100, rnd, file_out, characteristic_function_buffon, characteristic_function_buffon_2);
 
     //explicit method
