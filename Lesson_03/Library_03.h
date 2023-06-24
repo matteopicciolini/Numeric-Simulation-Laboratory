@@ -18,7 +18,6 @@
 void Random_Start(Random &random_generator);
 
 
-//Exercise_01.a
 /**
  * @brief Computes the error of a set of n measurements by calculating the standard deviation of the sample mean.
  * 

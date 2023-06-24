@@ -5,7 +5,7 @@ int main (int argc, char *argv[]){
     Random rnd;
 	Random_Start(rnd);
 
-    int M = 1E7; //n_steps
+    int M = 1E6; //n_steps
 	int N = 100; //n block
 	int L = M / N; //steps per block
 
@@ -86,14 +86,13 @@ int main (int argc, char *argv[]){
     acc_put = 0.;
     acc_2_put = 0.;
     
-    double n = 0.;
+    double n = 100.;
     double t = T / n;
     for (int i = 0; i < N; ++i){ //iteration on blocks
 		sum_call = 0.;
 		sum_put = 0.;
 		for (int j = 0; j < L; ++j){ //step in block
-			double rand = rnd.Gauss(0, T);
-            S = S_0 * exp((r - 0.5 * pow(sigma, 2)) * T + sigma * rand);
+            S = S_0;
             for(int z = 0; z < n; ++z){ // indirect sampling
        			S = S * exp((r - 0.5 * pow(sigma, 2.)) * (t * (z + 1) - t * z) + sigma * rnd.Gauss(0., 1.) * sqrt(t * (z + 1) - t * z));
       		}
@@ -111,7 +110,7 @@ int main (int argc, char *argv[]){
         sum_prog_call = acc_call / static_cast<double>(i + 1);
 		su2_prog_call = acc_2_call / static_cast<double>(i + 1);
 		err_prog_call = error(sum_prog_call, su2_prog_call, i);
-		file_output_discretized_call << i + 1<< std::setw(20) << sum_prog_call << std::setw(20) << err_prog_call << std::endl;
+		file_output_discretized_call << i + 1 << std::setw(20) << sum_prog_call << std::setw(20) << err_prog_call << std::endl;
 
 
         //data blocking put
