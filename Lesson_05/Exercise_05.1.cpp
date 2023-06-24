@@ -2,10 +2,6 @@
 
 int main (int argc, char* argv[]){
 
-    //Usage and phase choosing
-    //Usage(argc, argv);
-    //std::cout << std::endl;
-
     Input();
     std::cout << std::endl;
     
@@ -142,6 +138,7 @@ void Move(){
 
     q = prob_ground(x) / prob_ground(y);
     A = std::min(1., q);
+
     qe = prob_excited(xe) / prob_excited(ye);
     Ae = std::min(1., qe);
     
