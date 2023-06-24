@@ -5,12 +5,11 @@
 This directory contains the exercises of the Laboratory of Numeric Simulation A.A. 2022-2023. 
 
 ### Prerequisites
-In order to execute the comnands described in this file you will need several tools, such as `cmake`, `make`, `gcc`. On a Debian-based system you can install them with:
+In order to execute the comnands described in this file you will need several tools, such as `cmake`, `make`, `gcc`. Please note also that `Lesson_10` needs `opnmpi` library. On a Debian-based system you can install them with:
 
 ```
-sudo apt-get install cmake make gcc
+sudo apt-get install cmake make gcc opnmpi-bin
 ```
-
 
 
 ### Build
@@ -33,7 +32,7 @@ If you want to compile all the Exercise_XX.X.cpp files contained in all the Lezi
 ```
 make
 ```
-Otherwise, if you want to compile a specific file, you can type:
+5. Otherwise, if you want to compile a specific file, you can type:
 ```
 cd Lesson_XX
 make Exercise_XX.X.cpp
@@ -67,8 +66,13 @@ make Exercise_XX.X.cpp
 │   ├── 📓 Exercises_08.ipynb
 │   ├── 📓 Exercises_09.ipynb
 │   ├── 📓 Exercises_10.ipynb
-│   ├── 📓 Exercises_11.ipynb
-│   └── 📓 Exercises_12.ipynb
+│   ├── 📁 Exercises_11
+|   |   ├── 📓 Exercise_11.1.ipynb
+|   |   ├── 📓 Exercise_11.2.ipynb
+│   |   └── 📓 Exercise_11.3.ipynb
+│   └── 📁 Exercises_12
+|       ├── 📓 Exercise_12.1.ipynb
+|       └── 📓 Exercises_12.2_12.3.ipynb
 ├── 📁 Lesson_01
 │   ├── 🏗️ CMakeLists.txt
 │   ├── 🌟 Exercise_01.1.cpp
@@ -124,7 +128,7 @@ make Exercise_XX.X.cpp
 │   ├── 🌟 Library_06.cpp
 │   ├── 📜 Library_06.h
 │   └── 📝 run_all_temp.sh
-├── 📁 Lesson_06
+├── 📁 Lesson_07
 │   ├── 🏗️ CMakeLists.txt
 │   ├── 🌟 Exercise_07.1.cpp
 │   ├── 📁 input-output
@@ -140,7 +144,26 @@ make Exercise_XX.X.cpp
 │   │   ├── 📄 input.liquid
 │   │   └── 📄 input.solid
 │   ├── 🌟 Library_07.cpp
-│   ├── 📜 Library_07.h
+│   └── 📜 Library_07.h
+├── 📁 Lesson_08
+│   ├── 🏗️ CMakeLists.txt
+│   ├── 🌟 Exercise_08.1.cpp
+|   ├── 🌟 Exercise_08.2.cpp
+│   ├── 🌟 Library_08.cpp
+│   └── 📜 Library_08.h
+├── 📁 Lesson_09
+│   ├── 🏗️ CMakeLists.txt
+│   ├── 🌟 Exercise_09.1.cpp
+│   ├── 🌟 Library_09.cpp
+│   ├── 📜 Library_09.h
+│   └── 🐍 create_gif.py
+├── 📁 Lesson_10
+|   ├── 📄 American_capitals.dat
+│   ├── 🏗️ CMakeLists.txt
+│   ├── 🌟 Exercise_10.1.cpp
+│   ├── 🌟 Library_10.cpp
+│   ├── 📜 Library_10.h
+│   └── 🐍 create_gif.py
 ├── 📁 random-library
 │   ├── 🏗️ CMakeLists.txt
 │   ├── 📄 config.final
