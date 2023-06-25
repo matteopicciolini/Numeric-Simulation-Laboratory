@@ -9,41 +9,44 @@ int main(int argc, char *argv[]){
     int N = 100;            
     int L = int(M / N);
 
-    std::cout << "Working with " << L << " throws in each block" << std::endl;
+    //Progress bar
+    std::string perc = "▪▪▪▪▪▪▪▪▪▪";
 
-    //variables for acceptance rate of the algorithm
+    //Acceptance Rate
     double accepted = 0.;
     double attempted = 0.;
 
-    //Define global variables
-    double a0 = 0.0529 * pow(10, -9); // reduced units
-    double c = 2 ;       //to tune the acceptance rate
-    double integral = 0;             
+    //MC 
+    double delta = 2 ;
+    double integral = 0;
 
-    //Blocking average variables
-    double runningSum = 0.;
-    double runningSquared = 0.;
-    double error = 0.;
+    // Try some parameters
+    double mu = 1.;
+    double sigma = 0.5;         
 
-    std::ofstream Averages;
+    // Open files
+    std::ofstream Integral;
     std::ofstream Coordinates;
-
-    double mu = 1;
-    double sigma = 0.5;
-
-    double x = 0.;
-    Averages.open(std::string(ROOT_PATH) + "/Data/08.1_averages_" + std::to_string(mu).substr(0, 3) + "_" + std::to_string(sigma).substr(0, 3) + ".dat");
+    Integral.open(std::string(ROOT_PATH) + "/Data/08.1_integral_" + std::to_string(mu).substr(0, 3) + "_" + std::to_string(sigma).substr(0, 3) + ".dat");
     Coordinates.open(std::string(ROOT_PATH) + "/Data/08.1_coordinates_" + std::to_string(mu).substr(0, 3) + "_" + std::to_string(sigma).substr(0, 3) + ".dat");
 
-    EquilibrateUN(100, pow(10,4), x, rnd, c, mu, sigma);
-    double sum_prog = 0., sum_prog_2 = 0., acc = 0., acc_2 = 0.;
+
+    
+
+    // set starting point
+    double x = 0.;
+    
+    Equilibrate(100, pow(10, 3), x, rnd, delta, mu, sigma);
+
+    //Blocking average variables
+    double sum_prog = 0., sum_prog_2 = 0., acc = 0., acc_2 = 0., error = 0.;
     for(int j = 0; j < N; ++j){
         integral = 0;
         accepted = 0;
         attempted = 0;
         for (int i = 0; i < L; ++i){
-            MetropolisUniform(x, rnd, c, accepted, attempted, mu, sigma);
-            integral += (( -0.5 * EvalWaveFunctionSecondDerivative(x, mu, sigma) ) / EvalWaveFunctionNoAbs(x, mu, sigma))  + EvalPotential(x);
+            Metropolis(x, rnd, delta, accepted, attempted, mu, sigma);
+            integral += (( -0.5 * EvalWaveFunctionSecondDerivative(x, mu, sigma) ) / EvalWaveFunction(x, mu, sigma))  + EvalPotential(x);
             Coordinates << x << std::endl;
         }
         		
@@ -54,13 +57,15 @@ int main(int argc, char *argv[]){
 		sum_prog_2 = acc_2 / static_cast<double>(j + 1);
 		error = Error(sum_prog, sum_prog_2, j);
         
-        Averages << j << " "<< sum_prog << " " << error << std::endl;
+        Integral << j << " " << sum_prog << " " << error << std::endl;
         
-        if (j%10 == 0){
-           std::cout <<"Block: "<< j << " Uniform Acceptance rate " << accepted / attempted << std::endl;
-        }
+        //----------------------------Progress Bar------------------------------
+		Progress_bar(j, N, perc);
+		//----------------------------------------------------------------------
     }
-    Averages.close();
+
+    // Close files
+    Integral.close();
     Coordinates.close();
     rnd.SaveSeed();
     return 0;

@@ -28,29 +28,28 @@ double EvalPotential(double x, double a, double b){
     return a * std::pow(x, 2) + b * std::pow(x, 4);
 }
 
-double EvalWaveFunction(double x, double mu, double sigma){
+double EvalWaveFunctionSquared(double x, double mu, double sigma){
     return std::pow(std::abs(exp(-std::pow(x - mu, 2) / (2 * std::pow(sigma, 2))) + exp(-std::pow(x + mu, 2) / (2 * std::pow(sigma, 2)))), 2);
 }
 
-void EquilibrateUN(int nblocks, int L, double &initialPosition, Random &rnd, double c, double mu, double sigma){
+void Equilibrate(int nblocks, int L, double &position, Random &rnd, double delta, double mu, double sigma){
     double accepted = 0.;
     double attempted = 0.;
     for (int j = 0; j < nblocks; j++){
         for (int i = 0; i < L; i++){
-            MetropolisUniform(initialPosition, rnd, c, accepted, attempted, mu, sigma);
+            Metropolis(position, rnd, delta, accepted, attempted, mu, sigma);
         }
     }
 }
 
-void MetropolisUniform(double &initialPosition, Random &rnd, double c, double &accepted, double &attempted, double mu, double sigma){
+void Metropolis(double &position, Random &rnd, double delta, double &accepted, double &attempted, double mu, double sigma){
 
-    double tempPosition = initialPosition + rnd.Rannyu(-1, 1) * c;
-    double alpha = std::min(1., (EvalWaveFunction(tempPosition, mu, sigma) / EvalWaveFunction(initialPosition, mu, sigma)));
+    double future_position = position + rnd.Rannyu(-1, 1) * delta;
+    double alpha = std::min(1., (EvalWaveFunctionSquared(future_position, mu, sigma) / EvalWaveFunctionSquared(position, mu, sigma)));
 
-    // accepting the configuration with probability \alpha:
     double p = rnd.Rannyu();
     if (p < alpha){
-        initialPosition = tempPosition;
+        position = future_position;
         accepted++;
     }
     attempted++;
@@ -64,14 +63,9 @@ double EvalWaveFunctionSecondDerivative(double x, double mu, double sigma){
     return ((-1 / std::pow(sigma, 2)) * minusExp) + ((-1 / std::pow(sigma, 2)) * plusExp) + ((std::pow(x - mu, 2) / std::pow(sigma, 4)) * minusExp) + ((std::pow(x + mu, 2) / std::pow(sigma, 4)) * plusExp);
 }
 
-double EvalWaveFunctionNoAbs(double x, double mu, double sigma){
-    return std::abs(exp(-std::pow(x - mu, 2) / (2 * std::pow(sigma, 2))) + exp(-std::pow(x + mu, 2) / (2 * std::pow(sigma, 2))));
+double EvalWaveFunction(double x, double mu, double sigma){
+    return exp(-std::pow(x - mu, 2) / (2 * std::pow(sigma, 2))) + exp(-std::pow(x + mu, 2) / (2 * std::pow(sigma, 2)));
 }
-
-//double Error(double sum, double sum2, int iblk){
-//    if(iblk == 1) return 0.0;
-//    else return sqrt((sum2/(double)iblk - std::pow(sum/(double)iblk,2))/(double)(iblk-1));
-//}
 
 double Error(double AV, double AV2, int n){
 	if (n == 0){
@@ -80,4 +74,26 @@ double Error(double AV, double AV2, int n){
 	else {
 		return sqrt((AV2 - pow(AV,2)) / static_cast<double>(n));
 	}
+}
+
+//-----------------------Progress bar ----------------------------------
+
+std::string Green(std::string green){
+	return std::string("\033[1;32m") + green + "\033[0m";
+}
+
+std::string Gray(std::string gray){
+	return std::string("\033[1;90m") + gray + "\033[0m";
+}
+
+std::string Red(std::string red){
+	return std::string("\033[1;31m") + red + "\033[0m";
+}
+
+void Progress_bar(int& prog, int N, std::string perc){
+	std::cout << Red("Block number " + std::to_string(prog) + ". Progress: ");
+	std::cout << Green(perc.substr(0, 3 * std::floor(prog * 10.0 / N)));
+	std::cout << Gray(perc.substr(3 * std::floor(prog * 10.0 / N), 3 * 10));
+	std::cout << " " << int(prog * 100.0 / N) << " %\r";
+	std::cout.flush();
 }
