@@ -43,7 +43,7 @@ int main (int argc, char* argv[]){
 
     for(int i = 0; i < NGeneration; ++i){
         if(!migrate || (migrate && i % migration_freq != 0) || i == 0){ // continenti indipendenti -> no migrazioni
-            population.mutate(rnd);
+            population.reproduce(rnd);
         
         }
         else if(migrate && i % migration_freq == 0){
@@ -65,7 +65,7 @@ int main (int argc, char* argv[]){
 
             if(rank == giver){
                 for(int i = 0; i< Ngenes; i++){
-                    migrator[i] = population.chromosomes[h].get_gene(i);
+                    migrator[i] = population.individuals[h].get_gene(i);
                 }
                 MPI_Send(migrator, Ngenes, MPI_INTEGER, receiver, itag, MPI_COMM_WORLD);
             }
@@ -73,8 +73,8 @@ int main (int argc, char* argv[]){
             // se sono il ricevitore lo salvo
             if(rank == receiver){
                 MPI_Recv(migrator, Ngenes, MPI_INTEGER, giver, itag, MPI_COMM_WORLD, &stat);
-                population.chromosomes[h].set_gen(migrator); 
-                population.chromosomes[h].check();
+                population.individuals[h].set_gene(migrator); 
+                population.individuals[h].check();
             }
         }
 
@@ -83,7 +83,7 @@ int main (int argc, char* argv[]){
 
         // salvo i risultati
         if(print_city == "true"){
-            task.print_cities(i, population.chromosomes[population.get_n_individuals() - 1], rank, migr);
+            task.print_cities(i, population.individuals[population.get_n_individuals() - 1], rank, migr);
         }
         //prendo il best
         task.print_bests_len_ave(i, population.get_n_individuals() / 2, population, rank, migr);

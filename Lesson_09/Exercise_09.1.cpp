@@ -1,8 +1,12 @@
 #include "Library_09.h"
-#include "Chromosome_test.h"
+#include "Individual_test.h"
 
 
 int main (int argc, char* argv[]){
+
+    //Test class
+    Individual_test();
+
     std::string circ;
     std::string print_city;
     Usage(argc, argv, circ, print_city);
@@ -22,23 +26,21 @@ int main (int argc, char* argv[]){
 	//--------------------------------------------------------------------------
 
     Task task(circ);
-    Population population;
+    Population population(rnd);
     
     task.generate_cities(rnd);
-
-    population.set_configuration(rnd);
     task.eval(population);    
-    task.sort_population(&population);
+    task.sort_population(population);
 
     for(int i = 0; i < NGeneration; ++i){
         
-        population.mutate(rnd);
+        population.reproduce(rnd);
         task.eval(population);    
-        task.sort_population(&population);
+        task.sort_population(population);
 
         // salvo i risultati
         if(print_city == "true"){
-            task.print_cities(i, population.chromosomes[population.get_n_individuals() - 1]);
+            task.print_cities(i, population.individuals[population.get_n_individuals() - 1]);
         }
         //prendo il best
         task.print_bests_len_ave(i, population.get_n_individuals() / 2, population);

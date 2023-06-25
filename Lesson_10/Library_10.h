@@ -29,7 +29,7 @@ static const double expon = 6.0;
 
 // CLASSI
 
-class Chromosome {
+class Individual {
 
 private:
     static const int n_genes = Ngenes;
@@ -39,13 +39,13 @@ public:
     double fitness = 0;
     double len = 0;
 
-    Chromosome();
-    ~Chromosome();
+    Individual();
+    ~Individual();
 
-    Chromosome& operator= (const Chromosome& chr);
+    Individual& operator= (const Individual& chr);
 
 
-    void set_gen(int vec[n_genes]);
+    void set_gene(int vec[n_genes]);
     void set_fitness(double f);
     void set_len(double l);
     double get_fitness();
@@ -64,7 +64,7 @@ public:
     void shift(int pos, int m, int n);
     void permutate(int pos1, int pos2, int m);
     void reverse(int pos, int m);
-    void crossover(int pos, int len, Chromosome parent2);
+    void crossover(int pos, int len, Individual parent2);
 };
 
 
@@ -76,7 +76,7 @@ private:
 public:
     double best_len;
     double best_len_ave;
-    Chromosome chromosomes[n_individuals];
+    Individual individuals[n_individuals];
 
 
     Population();
@@ -84,7 +84,7 @@ public:
 
     int get_n_individuals();
     void set_configuration(Random &rnd);
-    void mutate(Random &rnd);
+    void reproduce(Random &rnd);
 };
 
 
@@ -102,18 +102,18 @@ public:
     void generate_circular_cities(Random rnd, double radius = 1.);
     void generate_squared_cities(Random rnd);
 
-    void print_cities(int generation, Chromosome chromosome, int rank, std::string migr);
+    void print_cities(int generation, Individual chromosome, int rank, std::string migr);
     void print_bests_len_ave(int generation, int part, Population population, int rank, std::string migr);
     void print_best_len(int generation, Population population, int rank, std::string migr);
 
-    void eval_fitness(Chromosome &chromosome);
+    void eval_fitness(Individual &chromosome);
     void eval(Population &population);
     void sort_population(Population *population);
     void load_cities(std::string filename);
 };
 
 // FUNZIONI
-void swap(Chromosome& a, Chromosome& b);
+void swap(Individual& a, Individual& b);
 void Random_Start(Random &random_generator, int primes_selector = 0);
 int partition(Population *population, int low, int high);
 void quickSort(Population *population, int low, int high);

@@ -24,23 +24,23 @@ void Random_Start(Random &random_generator, int primes_selector){
 	} else {std::cerr << "PROBLEM: Unable to open seed.in" << std::endl;}
 }
 
-void swap(Chromosome& a, Chromosome& b) {
-    Chromosome temp = a;
+void swap(Individual& a, Individual& b) {
+    Individual temp = a;
     a = b;
     b = temp;
 }
 
 int partition(Population* population, int low, int high) {
-    double pivot = population->chromosomes[high].fitness;
+    double pivot = population->individuals[high].fitness;
     int i = (low - 1);
 
     for (int j = low; j < high; j++) {
-        if (population->chromosomes[j].fitness <= pivot) {
+        if (population->individuals[j].fitness <= pivot) {
             i++;
-            swap(population->chromosomes[i], population->chromosomes[j]);
+            swap(population->individuals[i], population->individuals[j]);
         }
     }
-    swap(population->chromosomes[i + 1], population->chromosomes[high]);
+    swap(population->individuals[i + 1], population->individuals[high]);
 
     return (i + 1);
 }
@@ -115,10 +115,10 @@ std::string intToStringWithLeadingZeros(int value, int width) {
 
 // ----------------------------- CLASSES ---------------------------------
 
-Chromosome::Chromosome(){}
-Chromosome::~Chromosome(){}
+Individual::Individual(){}
+Individual::~Individual(){}
 
-Chromosome& Chromosome::operator= (const Chromosome& chromosome){
+Individual& Individual::operator= (const Individual& chromosome){
     for(int i = 0; i < n_genes; ++i) genes[i] = chromosome.genes[i];
     // fitness
     fitness = chromosome.fitness;
@@ -127,21 +127,21 @@ Chromosome& Chromosome::operator= (const Chromosome& chromosome){
     return *this;
 }
 
-void Chromosome::set_gen(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
-void Chromosome::set_fitness(double fitness){this->fitness = fitness;}
-void Chromosome::set_len(double len){this->len = len;}
-double Chromosome::get_fitness(){return fitness;}
-double Chromosome::get_len(){return len;}
-int Chromosome::get_n_genes(){return n_genes;}
-int Chromosome::get_gene(int i){return genes[i];}
+void Individual::set_gene(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
+void Individual::set_fitness(double fitness){this->fitness = fitness;}
+void Individual::set_len(double len){this->len = len;}
+double Individual::get_fitness(){return fitness;}
+double Individual::get_len(){return len;}
+int Individual::get_n_genes(){return n_genes;}
+int Individual::get_gene(int i){return genes[i];}
 
-void Chromosome::print(){
+void Individual::print(){
    for(int i = 0; i < n_genes; ++i) std::cout << genes[i] << " ";
    std::cout << std::endl;
 }
 
 /// riempie il cromosoma con geni casuali
-void Chromosome::fill(Random &rnd){
+void Individual::fill(Random &rnd){
     if(genes[0] != 0) {
             std::cerr << Red("Alert:") << " chromosome already full." << std::endl; 
             this->empty();
@@ -160,14 +160,14 @@ void Chromosome::fill(Random &rnd){
     }
 }
 
-void Chromosome::empty(){
+void Individual::empty(){
     for(int i = 0; i < n_genes; ++i){
         genes[i] = 0; 
     }
 }
 
 
-void Chromosome::swap(int position_1, int position_2){
+void Individual::swap(int position_1, int position_2){
    if(position_1 == 0) {
       position_1 = 1;
    }
@@ -184,7 +184,7 @@ void Chromosome::swap(int position_1, int position_2){
 
 
 
-void Chromosome::shift(int position, int m, int n){
+void Individual::shift(int position, int m, int n){
 
     if(position == 0) {
         position = 1;
@@ -218,7 +218,7 @@ void Chromosome::shift(int position, int m, int n){
     }
 }
 
-void Chromosome::permutate(int position_1, int position_2, int m){
+void Individual::permutate(int position_1, int position_2, int m){
     if(position_1 == 0) {
         position_1 = 1;
     }
@@ -258,7 +258,7 @@ void Chromosome::permutate(int position_1, int position_2, int m){
     }
 }
 
-void Chromosome::reverse(int position, int m){
+void Individual::reverse(int position, int m){
     if(position == 0) {
         position = 1;
     }
@@ -282,7 +282,7 @@ void Chromosome::reverse(int position, int m){
     }
 }
 
-void Chromosome::crossover(int position, int len, Chromosome chromosome_2){
+void Individual::crossover(int position, int len, Individual chromosome_2){
     int block[len];
     if(position == 0) {
         position = 1;
@@ -308,9 +308,9 @@ void Chromosome::crossover(int position, int len, Chromosome chromosome_2){
     } 
 }
 
-void Chromosome::check(){
+void Individual::check(){
     if(this->genes[0] != 1){
-        std::cerr << Red("Alert:") << " Chromosome::check has failed." << std::endl;
+        std::cerr << Red("Alert:") << " Individual::check has failed." << std::endl;
         exit(-1);
     }
 
@@ -320,12 +320,12 @@ void Chromosome::check(){
     }
 
     if(sum != (this->n_genes * (this->n_genes + 1)) / 2){
-        std::cerr << Red("Alert:") << " Chromosome::check has failed." << std::endl;
+        std::cerr << Red("Alert:") << " Individual::check has failed." << std::endl;
         exit(-1);
     }
 }
 
-int Chromosome::pbc(int pos){
+int Individual::pbc(int pos){
     //se sfora e non è multiplo della lunghezza restituisco il modulo
     if(pos > (n_genes - 1) && pos % (n_genes - 1) !=0)    pos = pos % (n_genes - 1);
     //se sfora ed è multiplo della lunghezza restituisco la lunghezza
@@ -340,12 +340,12 @@ Population::Population(){}
 Population::~Population(){}
 
 void Population::set_configuration(Random &rnd){
-   Chromosome chromosome;
+   Individual chromosome;
    for(int i = 0; i < n_individuals; ++i){
       chromosome.empty();
       chromosome.fill(rnd);
-      chromosomes[i] = chromosome;
-      chromosomes[i].check();
+      individuals[i] = chromosome;
+      individuals[i].check();
    }
 }
 
@@ -354,9 +354,9 @@ int Population::get_n_individuals(){
 }
 
 
-void Population::mutate(Random &rnd){
+void Population::reproduce(Random &rnd){
     
-    Chromosome chromosome[n_individuals];
+    Individual chromosome[n_individuals];
     int n_g = chromosome[0].get_n_genes();
     double expo = expon;
     int h = 0; 
@@ -366,8 +366,8 @@ void Population::mutate(Random &rnd){
     for (int i = 0; i < n_individuals; ++i) {
         
         // (prima salvo lunghezze migliori)
-        if(i > n_individuals / 2) len_av += this->chromosomes[i].len;          // media migliori
-        if(i == n_individuals - 1) this->best_len = this->chromosomes[i].len; // il migliore
+        if(i > n_individuals / 2) len_av += this->individuals[i].len;          // media migliori
+        if(i == n_individuals - 1) this->best_len = this->individuals[i].len; // il migliore
 
         // estraggo uno dei migliori secondo legge di potenza, poi lo salvo
         h = (int)(n_individuals * (1 - pow(rnd.Rannyu(), expo))) - 1; // estrae un indice alto
@@ -375,7 +375,7 @@ void Population::mutate(Random &rnd){
         if(h >= n_individuals) h = n_individuals - 1;
         //lim inf
         if(h < 0) h = 0;
-        chromosome[i] = this->chromosomes[h];
+        chromosome[i] = this->individuals[h];
     }
     this->best_len_ave = len_av / (double)(n_individuals / 2); 
 
@@ -424,7 +424,7 @@ void Population::mutate(Random &rnd){
 
         //controllo e salvo per la generazione successiva
         chromosome[i].check();
-        this->chromosomes[i] = chromosome[i];
+        this->individuals[i] = chromosome[i];
     }
 }
 
@@ -474,7 +474,7 @@ void Task::load_cities(std::string filename){
 }
 
 // stampa le coordinate delle città nell'ordine indicato da un cromosoma
-void Task::print_cities(int generation, Chromosome chr, int rank, std::string migr){
+void Task::print_cities(int generation, Individual chr, int rank, std::string migr){
 
     std::ofstream stream;
     stream.open(std::string(ROOT_PATH) + "/Data/10.1_" + "city_coord_" + migr + "_" 
@@ -505,7 +505,7 @@ void Task::print_best_len(int generation, Population pop, int rank, std::string 
 }
 
 // prende un cromosoma e con l'ordine dei geni calcola la distanza tra le città e la fitness
-void Task::eval_fitness(Chromosome &chromosome){
+void Task::eval_fitness(Individual &chromosome){
     double fitn = 0;
     double accu = 0;
     double acculen = 0;
@@ -534,7 +534,7 @@ void Task::eval_fitness(Chromosome &chromosome){
 // prende una popolazione e applica eval_fitness su tutti i suoi individui
 void Task::eval(Population &population){ 
     for(int i = 0; i < population.get_n_individuals(); ++i){
-        eval_fitness(population.chromosomes[i]);
+        eval_fitness(population.individuals[i]);
     }
 }
 
