@@ -32,10 +32,8 @@ double walker[m_props];
 //Exercise 07 parameters
 double v_tail, w_tail;
 std::ofstream instant_epot, instant_pres;
-double min_dist;
-int bin_index;
 const int n_props = 5;
-const int n_bins = (int)(m_props - n_props);
+const int n_bins = (m_props - n_props);
 double err_gr[n_bins];
 std::string invet_str;
 std::string print_instant;

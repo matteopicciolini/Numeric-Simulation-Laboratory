@@ -154,7 +154,6 @@ void Input(void){
   
     vol = (double)npart/rho;
     box = pow(vol, 1.0 / 3.0);
-    min_dist = box / 2.;
     bin_size = box /  (2.0 * (double)n_bins);
 
     std::cout << "Volume of the simulation box = " << vol << std::endl;
@@ -402,10 +401,9 @@ void Measure(){ //Properties measurement
             }
 
             // riempio l'istogramma della gdr
-            // box/2 è la risoluzione dell'istogramma della gdr
-            if(dr < min_dist){
-                bin_index = static_cast<int>(n_props + (dr / bin_size));
-                walker[bin_index] += 2;
+            // g(r) in [0, box/2]
+            if(dr < box / 2.){
+                walker[n_props + static_cast<int>(std::floor(dr / bin_size))] += 2;
             }
         }          
     }
@@ -460,7 +458,7 @@ void Accumulate(void){ //Update block averages
 
 void Averages(int iblk){ //Print results for current block
     
-    std::ofstream Epot, Ekin, Etot, Temp, Press, Gr;
+    std::ofstream Epot, Ekin, Etot, Temp, Press;
     const int wd = 12;
         
     std::cout << "Block number " << iblk << std::endl;
@@ -470,7 +468,6 @@ void Averages(int iblk){ //Print results for current block
         //Ekin.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_ekin.dat", std::ios::app);
         //Etot.open(std::string(ROOT_PATH) + "/Data/" + pattern +  "_etot.dat", std::ios::app);
         Press.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_press.dat", std::ios::app);
-        Gr.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_gr.dat", std::ios::app);
     }
     Temp.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_temp.dat", std::ios::app);
 
@@ -513,22 +510,20 @@ void Averages(int iblk){ //Print results for current block
         Press << std::setw(wd) << iblk <<  std::setw(wd) << stima_pres << std::setw(wd) << glob_av[iw]/(double)iblk << std::setw(wd) << err_press << std::endl;
 
         for (int i = 0; i < n_bins; ++i) {
-            int index = (int)(n_props + i );
-            //std::cout << blk_av[index] << std::endl;
+            int index = n_props + i;
             stima_gr = blk_av[index] / blk_norm /(rho * npart * 4. / 3. * M_PI * (pow((bin_size * (i + 1)), 3) - pow((bin_size * i), 3)));
             glob_av[index] += stima_gr;
             glob_av2[index] += stima_gr * stima_gr;
-            Gr << std::setw(wd) << iblk << std::setw(wd) << bin_size * i << std::setw(wd) << stima_gr << std::setw(wd) << glob_av[index] / (double)iblk << std::endl;
         }
         if (iblk == nblk) {
-            std::ofstream finalGr;
-            finalGr.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_finalGr.dat", std::ios::trunc);
+            std::ofstream Gdr;
+            Gdr.open(std::string(ROOT_PATH) + "/Data/" + pattern + "_gdr.dat");
             for (int i = 0; i < n_bins; i++){
-                int index = (int)(n_props + i);
+                int index = n_props + i;
                 err_gr[i] = Error(glob_av[index], glob_av2[index], nblk);
-                finalGr << std::setw(wd) << bin_size * i << std::setw(wd) << glob_av[index] / (double)iblk << std::setw(wd) << err_gr[i] << std::endl;
+                Gdr << std::setw(wd) << bin_size * i << std::setw(wd) << glob_av[index] / (double)iblk << std::setw(wd) << err_gr[i] << std::endl;
             }
-            finalGr.close();
+            Gdr.close();
         }
     }
     //Temperature
@@ -541,7 +536,6 @@ void Averages(int iblk){ //Print results for current block
     Etot.close();
     Temp.close();
     Press.close();
-    Gr.close();
 }
 
 
