@@ -31,12 +31,11 @@ int main (int argc, char* argv[]){
 	//--------------------------------------------------------------------------
 
     Task task;
-    Population population;
+    Population population(rnd);
     
     task.load_cities("American_capitals.dat");
-    population.set_configuration(rnd);
     task.eval(population);    
-    task.sort_population(&population);
+    task.sort_population(population);
 
     
     Random_Start(rnd, rank); //inizializzo ciascuno nodo su coppie di numeri primi differenti    
@@ -79,7 +78,7 @@ int main (int argc, char* argv[]){
         }
 
         task.eval(population);    
-        task.sort_population(&population);
+        task.sort_population(population);
 
         // salvo i risultati
         if(print_city == "true"){

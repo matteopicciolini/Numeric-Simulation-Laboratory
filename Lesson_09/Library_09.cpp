@@ -141,9 +141,9 @@ void Individual::print(){
 
 void Individual::fill(Random &rnd){
     if(genes[0] != 0) {
-            std::cerr << Red("Alert:") << " individual already full." << std::endl; 
-            this->empty();
-        }
+        std::cerr << Red("Alert:") << " individual already full." << std::endl; 
+        this->empty();
+    }
     
     int r = (int)(rnd.Rannyu() * n_genes);
     genes[0] = 1;
@@ -481,32 +481,32 @@ void Task::generate_cities(Random rnd){
 
 
 // stampa le coordinate delle città nell'ordine indicato da un individuo
-void Task::print_cities(int generation, Individual chr){
+void Task::print_cities(int generation, Individual individual){
 
     std::ofstream stream;
     stream.open(std::string(ROOT_PATH) + "/Data/09.1_" + task + "_city_coord_" + intToStringWithLeadingZeros(generation + 1, 3) + ".dat");
 
     int seq;
     for(int i = 0; i < n_cities; ++i){
-        seq = chr.get_gene(i) - 1; // nell'ordine indicato dal individuo
+        seq = individual.get_gene(i) - 1; // nell'ordine indicato dal individuo
         stream << cities_x[seq]  << " " << cities_y[seq] << std::endl;
     }
     stream.close();
 }
 
 // stampa la lunghezza media della migliore metà di individui in una popolazione
-void Task::print_bests_len_ave(int generation, int part, Population populatio){
+void Task::print_bests_len_ave(int generation, int part, Population population){
     std::ofstream str;
     str.open(std::string(ROOT_PATH) + "/Data/09.1_" + task + "_best_len_average.dat", std::ios_base::app);
-    str << generation + 1 << " " << populatio.best_len_ave << std::endl;
+    str << generation + 1 << " " << population.best_len_ave << std::endl;
     str.close();
 }
 
 // Stampa la lunghezza del miglior individuo di una popolazione
-void Task::print_best_len(int generation, Population populatio){
+void Task::print_best_len(int generation, Population population){
     std::ofstream str;
     str.open(std::string(ROOT_PATH) + "/Data/09.1_" + task + "_best_len.dat", std::ios_base::app);
-    str << generation  + 1 << " " << populatio.best_len << std::endl;
+    str << generation  + 1 << " " << population.best_len << std::endl;
     str.close();
 }
 

@@ -170,7 +170,7 @@ public:
     void generate_squared_cities(Random rnd);
     void generate_cities(Random rnd);
 
-    void print_cities(int generation, Individual chr);
+    void print_cities(int generation, Individual individual);
     void print_bests_len_ave(int generation, int part, Population pop);
     void print_best_len(int generation, Population pop);
 

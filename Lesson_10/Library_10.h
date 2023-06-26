@@ -53,18 +53,79 @@ public:
     int get_n_genes();
     int get_gene(int i);
 
+    /**
+     * @brief Fills the individual's genes with unique values using a random number generator.
+     * If the first gene is already filled, it displays an alert and empties the individual.
+     * 
+     * @param rnd The random number generator used to generate random numbers.
+     */
     void fill(Random &rnd);
+    /**
+     * @brief Empties the individual's genes by setting them to zero.
+     */
     void empty();
     void print();
     int pbc(int pos);
     void check();
+    bool equals(Individual& individual_2);
 
     // mutations
-    void swap(int n, int m);
-    void shift(int pos, int m, int n);
-    void permutate(int pos1, int pos2, int m);
-    void reverse(int pos, int m);
-    void crossover(int pos, int len, Individual parent2);
+    /**
+     * @brief Swaps the values of two positions in the individual's genes array.
+     *        If either position is 0, it is treated as position 1.
+     *
+     * @param position_1 The first position to swap.
+     * @param position_2 The second position to swap.
+     */
+    void swap(int position_1, int position_2);
+
+    /**
+     * @brief Shifts a block of genes within the individual's genes array.
+     *        If the position is 0, it is treated as position 1.
+     *        If the position exceeds the maximum index, it is adjusted using periodic boundary conditions.
+     *        If the block size (m) is equal to or greater than n_genes - 1, m is set to 1.
+     *
+     * @param position The starting position of the block to shift.
+     * @param m The size of the block to shift.
+     * @param n The number of times to shift the block.
+     */
+    void shift(int position, int m, int n);
+
+    /**
+     * @brief Permutes a block of genes between two positions in the individual's genes array.
+     *        If either position is 0, it is treated as position 1.
+     *        If a position exceeds the maximum index, it is adjusted using periodic boundary conditions.
+     *        If m is greater than n_genes/2, m is set to 1.
+     *        If m is greater than the distance between position_1 and position_2, m is set to the distance.
+     *        If position_1 is greater than position_2, they are swapped.
+     *
+     * @param position_1 The first position defining the block to permute.
+     * @param position_2 The second position defining the block to permute.
+     * @param m The size of the block to permute.
+     */
+    void permutate(int position_1, int position_2, int m);
+
+    /**
+     * @brief Reverses a block of genes within the individual's genes array.
+     *        If the position is 0, it is treated as position 1.
+     *        If the position exceeds the maximum index, it is adjusted using periodic boundary conditions.
+     *        If m is greater than n_genes - 1, m is set to 2.
+     *
+     * @param position The starting position of the block to reverse.
+     * @param m The size of the block to reverse.
+     */
+    void reverse(int position, int m);
+
+    /**
+     * @brief Performs crossover between the individual's genes and genes from another individual.
+     *        The crossover is performed starting from the specified position and for a specified length.
+     *        If the position is 0, it is treated as position 1.
+     *
+     * @param position The starting position of the crossover.
+     * @param len The length of the crossover block.
+     * @param individual_2 The other individual to perform crossover with.
+     */
+    void crossover(int position, int len, Individual individual_2);
 };
 
 
@@ -79,11 +140,10 @@ public:
     Individual individuals[n_individuals];
 
 
-    Population();
+    Population(Random &rnd);
     ~Population();
 
     int get_n_individuals();
-    void set_configuration(Random &rnd);
     void reproduce(Random &rnd);
 };
 
@@ -106,17 +166,36 @@ public:
     void print_bests_len_ave(int generation, int part, Population population, int rank, std::string migr);
     void print_best_len(int generation, Population population, int rank, std::string migr);
 
-    void eval_fitness(Individual &chromosome);
+    /**
+     * @brief Calculates the fitness of an individual based on the order of its genes, 
+     * considering the distances between cities.
+     * The fitness is determined by the inverse of the total distance traveled. The shorter the distance, the higher the fitness.
+     *
+     * @param individual The individual for which to calculate the fitness.
+     */
+    void eval_fitness(Individual &individual);
+
+    /**
+     * @brief Evaluates the fitness of all individuals in a population by applying eval_fitness function to each individual.
+     *
+     * @param population The population to evaluate.
+     */
     void eval(Population &population);
-    void sort_population(Population *population);
+
+    /**
+     * @brief Sorts the individuals in a population in descending order based on their fitness.
+     *
+     * @param population The population to evaluate.
+     */
+    void sort_population(Population &population);
     void load_cities(std::string filename);
 };
 
 // FUNZIONI
 void swap(Individual& a, Individual& b);
 void Random_Start(Random &random_generator, int primes_selector = 0);
-int partition(Population *population, int low, int high);
-void quickSort(Population *population, int low, int high);
+int partition(Population &population, int low, int high);
+void quickSort(Population &population, int low, int high);
 void Delete_old_files(std::string pattern);
 void Usage(int argc, char* argv[], std::string &print_city, std::string &migrate, int &migration_freq);
 void Progress_bar(int& s, int& prog, int rank);
