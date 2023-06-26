@@ -19,11 +19,11 @@ static const int NindPop = 5000; //Numero di individui per popolazione
 static const int Ngenes = 50; // numero di città
 static const int NGeneration = 500; // numero di generazioni
 static const double Mutation_Probability[5] = {
-    0.1, // swap
+    0.11, // swap
     0.1, // reverse
-    0.2, // shift
-    0.2, // permutate
-    0.5  // crossover
+    0.05, // shift
+    0.05, // permutate
+    0.8  // crossover
     };
 static const double expon = 6.0;
 
@@ -42,10 +42,10 @@ public:
     Individual();
     ~Individual();
 
-    Individual& operator= (const Individual& chr);
+    Individual& operator= (const Individual& individual);
 
 
-    void set_gene(int vec[n_genes]);
+    void set_genes(int vec[n_genes]);
     void set_fitness(double f);
     void set_len(double l);
     double get_fitness();
@@ -162,7 +162,7 @@ public:
     void generate_circular_cities(Random rnd, double radius = 1.);
     void generate_squared_cities(Random rnd);
 
-    void print_cities(int generation, Individual chromosome, int rank, std::string migr);
+    void print_cities(int generation, Individual individual, int rank, std::string migr);
     void print_bests_len_ave(int generation, int part, Population population, int rank, std::string migr);
     void print_best_len(int generation, Population population, int rank, std::string migr);
 

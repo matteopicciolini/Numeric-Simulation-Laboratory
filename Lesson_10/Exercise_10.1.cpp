@@ -4,7 +4,7 @@ int main (int argc, char* argv[]){
     std::string print_city;
     std::string migr;
     bool migrate;
-    int migration_freq;
+    int migration_freq, i_tag;
     Usage(argc, argv, print_city, migr, migration_freq);
     if (migr == "true"){
         migrate = true;
@@ -23,7 +23,7 @@ int main (int argc, char* argv[]){
 
     Random rnd;
     Random_Start(rnd);
-    Delete_old_files("10.1_" + migr + "_" + std::to_string(rank) + "_best_len");
+    
     
     //------------------------Progress bar declaration--------------------------
 	int stp2 = NGeneration / 10;
@@ -33,11 +33,22 @@ int main (int argc, char* argv[]){
     Task task;
     Population population(rnd);
     
+
+    // -----------------------------------
+
     task.load_cities("American_capitals.dat");
+    migr = migr + "_american";
+
+    //task.generate_squared_cities(rnd);
+    //migr = migr + "_square" ;
+
+    // ----------------------------------
+
+    Delete_old_files("10.1_" + migr + "_" + std::to_string(rank) + "_best_len");
+
     task.eval(population);    
     task.sort_population(population);
 
-    
     Random_Start(rnd, rank); //inizializzo ciascuno nodo su coppie di numeri primi differenti    
 
     for(int i = 0; i < NGeneration; ++i){
@@ -48,7 +59,7 @@ int main (int argc, char* argv[]){
         else if(migrate && i % migration_freq == 0){
             int h = 0, giver = 0, receiver = 1;
             int migrator[Ngenes];
-            int itag = 1;
+            i_tag = i + 1;
 
             if(rank == 0){
                 h = (int)(population.get_n_individuals() * (1 - pow(rnd.Rannyu(), 6))) - 1; // scelgo un individuo come al solito
@@ -58,21 +69,25 @@ int main (int argc, char* argv[]){
                 }while(receiver == giver); // finchè giver e receiver sono uguali continua il ciclo
             }
 
-            MPI_Bcast(&h, 1, MPI_INTEGER, 0, MPI_COMM_WORLD); // il core 0 manda a tutti gli altri
+            // il rank 0 manda le variabili h, giver, receiver agli altri
+            MPI_Bcast(&h, 1, MPI_INTEGER, 0, MPI_COMM_WORLD);
             MPI_Bcast(&giver, 1, MPI_INTEGER, 0, MPI_COMM_WORLD); 
             MPI_Bcast(&receiver, 1, MPI_INTEGER, 0, MPI_COMM_WORLD);
 
+            // se sono il donatore dono l'individuo h-esimo
             if(rank == giver){
-                for(int i = 0; i< Ngenes; i++){
+                // salvo l'individuo in migrator
+                for(int i = 0; i < Ngenes; i++){
                     migrator[i] = population.individuals[h].get_gene(i);
                 }
-                MPI_Send(migrator, Ngenes, MPI_INTEGER, receiver, itag, MPI_COMM_WORLD);
+                // invo migrator al processo specificato come receiver
+                MPI_Send(migrator, Ngenes, MPI_INTEGER, receiver, i_tag, MPI_COMM_WORLD);
             }
 
             // se sono il ricevitore lo salvo
             if(rank == receiver){
-                MPI_Recv(migrator, Ngenes, MPI_INTEGER, giver, itag, MPI_COMM_WORLD, &stat);
-                population.individuals[h].set_gene(migrator); 
+                MPI_Recv(migrator, Ngenes, MPI_INTEGER, giver, i_tag, MPI_COMM_WORLD, &stat);
+                population.individuals[h].set_genes(migrator); 
                 population.individuals[h].check();
             }
         }

@@ -125,7 +125,7 @@ Individual& Individual::operator= (const Individual& individual){
     return *this;
 }
 
-void Individual::set_gene(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
+void Individual::set_genes(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
 void Individual::set_fitness(double fitness){this->fitness = fitness;}
 void Individual::set_len(double len){this->len = len;}
 double Individual::get_fitness(){return fitness;}

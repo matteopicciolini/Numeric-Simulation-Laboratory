@@ -39,7 +39,7 @@ public:
 
     Individual& operator= (const Individual& chr);
 
-    void set_gene(int vec[n_genes]);
+    void set_genes(int vec[n_genes]);
     void set_fitness(double f);
     void set_len(double l);
     double get_fitness();

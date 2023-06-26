@@ -96,12 +96,12 @@ void Usage(int argc, char* argv[], std::string &print_city, std::string &migrate
         migration_freq = std::stoi(argv[2]);
         print_city = static_cast<std::string>(argv[3]);
         if (print_city != "true" && print_city != "false" && migrate != "true" && migrate != "false" && migration_freq < 0){ 
-            std::cerr << "Usage: ./Exercise_10.1 <migrate> <migration_freq> <print_city>  with <migrate> and <print_city> = {true, false} and <migration_freq> = unsign int type" << std::endl;
+            std::cerr << "Usage: mpiexec -np <rank_number> Exercise_10.1 <migrate> <migration_freq> <print_city>  with <migrate> and <print_city> = {true, false} and <migration_freq> = unsign int type" << std::endl;
             exit(-1);
         }
     }
     else{
-        std::cerr << "Usage: ./Exercise_10.1 <migrate> <migration_freq> <print_city>  with <migrate> and <print_city> = {true, false} and <migration_freq> = unsign int type" << std::endl;
+        std::cerr << "Usage: mpiexec -np <rank_number> Exercise_10.1 <migrate> <migration_freq> <print_city>  with <migrate> and <print_city> = {true, false} and <migration_freq> = unsign int type" << std::endl;
         exit(-1);
     }
 }
@@ -127,7 +127,7 @@ Individual& Individual::operator= (const Individual& individual){
     return *this;
 }
 
-void Individual::set_gene(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
+void Individual::set_genes(int vec[n_genes]){for(int i = 0; i < n_genes; ++i) genes[i] = vec[i];}
 void Individual::set_fitness(double fitness){this->fitness = fitness;}
 void Individual::set_len(double len){this->len = len;}
 double Individual::get_fitness(){return fitness;}
@@ -140,7 +140,7 @@ void Individual::print(){
    std::cout << std::endl;
 }
 
-/// riempie il cromosoma con geni casuali
+/// riempie l'individuo con geni casuali
 void Individual::fill(Random &rnd){
     if(genes[0] != 0) {
         std::cerr << Red("Alert:") << " individual already full." << std::endl; 
@@ -282,7 +282,7 @@ void Individual::reverse(int position, int m){
     }
 }
 
-void Individual::crossover(int position, int len, Individual chromosome_2){
+void Individual::crossover(int position, int len, Individual individual_2){
     int block[len];
     if(position == 0) {
         position = 1;
@@ -300,8 +300,8 @@ void Individual::crossover(int position, int len, Individual chromosome_2){
         for(int i = 0; i < len; ++i){
             // quando trovo nell'altro genitore il gene presente
             // nel blocco, lo salvo nel buco scavato all'inizio
-            if(chromosome_2.genes[pbc(j)] == block[i] ){
-                genes[pbc(position+count)] = chromosome_2.genes[pbc(j)];
+            if(individual_2.genes[pbc(j)] == block[i] ){
+                genes[pbc(position+count)] = individual_2.genes[pbc(j)];
                 count++;
             }
         }
@@ -471,7 +471,7 @@ void Task::load_cities(std::string filename){
     coord.close();
 }
 
-// stampa le coordinate delle città nell'ordine indicato da un cromosoma
+// stampa le coordinate delle città nell'ordine indicato da un individuo
 void Task::print_cities(int generation, Individual individual, int rank, std::string migr){
 
     std::ofstream stream;
@@ -480,7 +480,7 @@ void Task::print_cities(int generation, Individual individual, int rank, std::st
 
     int seq;
     for(int i = 0; i < n_cities; ++i){
-        seq = individual.get_gene(i) - 1; // nell'ordine indicato dal cromosoma
+        seq = individual.get_gene(i) - 1; // nell'ordine indicato dal individuo
         stream << cities_x[seq]  << " " << cities_y[seq] << std::endl;
     }
     stream.close();
@@ -502,7 +502,7 @@ void Task::print_best_len(int generation, Population population, int rank, std::
     str.close();
 }
 
-// prende un cromosoma e con l'ordine dei geni calcola la distanza tra le città e la fitness
+// prende un individuo e con l'ordine dei geni calcola la distanza tra le città e la fitness
 void Task::eval_fitness(Individual &individual){
     double fitness = 0;
     double accu = 0;

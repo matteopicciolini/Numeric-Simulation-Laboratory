@@ -5,7 +5,7 @@ import numpy as np
 import os
 
 # Percorso dei file dati
-file_pattern = "../Data/10.1_city_coord_false_0_*.dat"
+file_pattern = "../Data/10.1_city_coord_true_american_0_*.dat"
 
 # Lista per memorizzare i frame dell'animazione
 frames = []
