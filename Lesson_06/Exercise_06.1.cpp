@@ -8,12 +8,14 @@ int main(int argc, char* argv[]){
     Usage(argc, argv);
     std::cout << std::endl;
 
+    Input(); //Inizialization
+
     if(eq == "false"){
         for (int istep = 1; istep <= 1e5; ++istep){
             Move(metro);
         }
     }
-    Input(); //Inizialization
+    
     for(int iblk = 1; iblk <= nblk; ++iblk){
         Reset(iblk);   //Reset block averages
         for(int istep = 1; istep <= nstep; ++istep){
