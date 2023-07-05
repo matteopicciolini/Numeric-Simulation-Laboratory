@@ -1,6 +1,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-# Laboratory of Numeric Simulation
+# Numeric Simulation Laboratory
 ## Matteo Picciolini
 This directory contains the exercises of the Laboratory of Numeric Simulation A.A. 2022-2023. 
 
